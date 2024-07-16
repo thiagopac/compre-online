@@ -24,7 +24,7 @@ const NavBarTitle = () => (
 );
 
 const MenuButton = () => (
-  <Link href="/modal" asChild>
+  <Link href="/Menu" asChild>
     <Pressable>
       {({ pressed }) => (
         <FontAwesome
