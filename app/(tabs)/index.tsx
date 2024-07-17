@@ -5,12 +5,14 @@ import { Text, View } from "@/components/Themed";
 import SearchInput from "@/components/SearchInput";
 import React from "react";
 import CategorySquares from "@/components/CategorySquares";
+import HorizontalProductScrollList from "@/components/HorizontalProductScrollList";
 
 export default function TabOneScreen() {
   return (
     <View style={styles.container}>
       <SearchInput />
       <CategorySquares />
+      <HorizontalProductScrollList />
     </View>
   );
 }
