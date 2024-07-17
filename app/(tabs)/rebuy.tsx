@@ -1,29 +1,25 @@
-import { StyleSheet } from "react-native";
-
-import EditScreenInfo from "@/components/EditScreenInfo";
-import { Text, View } from "@/components/Themed";
+import React from "react";
+import { StyleSheet, FlatList } from "react-native";
+import VerticalProductList from "@/components/VerticalProductList";
 
 export default function TabRebuyScreen() {
+  const placeholderData = [{}];
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Recompra</Text>
-    </View>
+    <FlatList
+      data={placeholderData}
+      renderItem={null}
+      keyExtractor={(_, index) => index.toString()}
+      ListFooterComponent={VerticalProductList}
+      style={styles.flatList}
+    />
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: "#fff",
+  },
+  flatList: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: "80%",
   },
 });

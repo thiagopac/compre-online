@@ -1,36 +1,37 @@
-import { StyleSheet } from "react-native";
-
-import EditScreenInfo from "@/components/EditScreenInfo";
-import { Text, View } from "@/components/Themed";
-import SearchInput from "@/components/SearchInput";
 import React from "react";
+import { StyleSheet, View, FlatList } from "react-native";
+import SearchInput from "@/components/SearchInput";
 import CategorySquares from "@/components/CategorySquares";
 import HorizontalProductScrollList from "@/components/HorizontalProductScrollList";
+import VerticalProductList from "@/components/VerticalProductList";
 
-export default function TabOneScreen() {
+const ListHeader = () => (
+  <View style={styles.container}>
+    <SearchInput />
+    <CategorySquares />
+    <HorizontalProductScrollList />
+  </View>
+);
+
+export default function TabStoreScreen() {
+  const placeholderData = [{}];
   return (
-    <View style={styles.container}>
-      <SearchInput />
-      <CategorySquares />
-      <HorizontalProductScrollList />
-    </View>
+    <FlatList
+      ListHeaderComponent={ListHeader}
+      data={placeholderData}
+      renderItem={null}
+      keyExtractor={(_, index) => index.toString()}
+      ListFooterComponent={VerticalProductList}
+      style={styles.flatList}
+    />
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: "#fff",
+  },
+  flatList: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "flex-start",
-    width: "100%",
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: "80%",
   },
 });

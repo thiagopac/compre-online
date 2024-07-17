@@ -36,6 +36,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     backgroundColor: "#fff",
     width: "96%",
+    margin: "2%",
   },
   categoryContainer: {
     flexDirection: "row",

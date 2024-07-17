@@ -71,7 +71,8 @@ const styles = StyleSheet.create({
   container: {
     marginTop: 20,
     marginBottom: 20,
-    paddingHorizontal: 15,
+    backgroundColor: "#fff",
+    paddingLeft: "4%",
   },
   title: {
     fontSize: 18,
@@ -94,7 +95,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 20,
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: "#dfdfdf",
   },
   productImage: {
     width: "100%",
@@ -123,6 +124,8 @@ const styles = StyleSheet.create({
     color: "white",
     paddingVertical: 5,
     paddingHorizontal: 10,
+    overflow: "hidden",
+    borderRadius: 5,
     fontSize: 12,
   },
   productName: {
