@@ -2,17 +2,15 @@ import { StyleSheet } from "react-native";
 
 import EditScreenInfo from "@/components/EditScreenInfo";
 import { Text, View } from "@/components/Themed";
+import SearchInput from "@/components/SearchInput";
+import React from "react";
+import CategorySquares from "@/components/CategorySquares";
 
 export default function TabOneScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Loja</Text>
-      {/* <View
-        style={styles.separator}
-        lightColor="#eee"
-        darkColor="rgba(255,255,255,0.1)"
-      /> */}
-      {/* <EditScreenInfo path="app/(tabs)/index.tsx" /> */}
+      <SearchInput />
+      <CategorySquares />
     </View>
   );
 }
@@ -21,7 +19,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "flex-start",
+    width: "100%",
   },
   title: {
     fontSize: 20,
