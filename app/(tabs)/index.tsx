@@ -48,7 +48,7 @@ const TabStoreScreen = () => {
     }
   };
 
-  if (loading) return <Text>Loading...</Text>;
+  if (loading) return <Text>Carregando...</Text>;
   if (error) return <Text>Error: {error}</Text>;
 
   return (

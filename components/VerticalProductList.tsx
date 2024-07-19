@@ -18,7 +18,8 @@ interface VerticalProductListProps {
 const VerticalProductList = ({ title, data }: VerticalProductListProps) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{title}</Text>
+      {title && title.length > 0 && <Text style={styles.title}>{title}</Text>}
+
       <FlatList
         data={data}
         keyExtractor={(item) => item.id.toString()}

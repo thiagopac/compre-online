@@ -23,3 +23,5 @@ export interface StoreData {
   categories: Category[];
   productLists: ProductList[];
 }
+
+export type RebuyData = Product[];

@@ -1,25 +1,45 @@
-import React from "react";
-import { StyleSheet, FlatList } from "react-native";
+import React, { useEffect, useState } from "react";
+import { StyleSheet, View, Text } from "react-native";
+import { RebuyData, Product } from "@/api/types";
+import { fetchRebuyData } from "@/api/rebuyApi";
 import VerticalProductList from "@/components/VerticalProductList";
 
 export default function TabRebuyScreen() {
-  const placeholderData = [{}];
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const data: RebuyData | null = await fetchRebuyData();
+        if (data) {
+          setProducts(data);
+        } else {
+          setError("No data found");
+        }
+      } catch (error) {
+        console.error("Failed to fetch rebuy data:", error);
+        setError("Failed to fetch data");
+      }
+      setLoading(false);
+    };
+    loadData();
+  }, []);
+
+  if (loading) return <Text>Carregando...</Text>;
+  if (error) return <Text>Error: {error}</Text>;
+
   return (
-    <FlatList
-      data={placeholderData}
-      renderItem={null}
-      keyExtractor={(_, index) => index.toString()}
-      ListFooterComponent={VerticalProductList}
-      style={styles.flatList}
-    />
+    <View style={styles.container}>
+      <VerticalProductList data={products} title="" />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff",
-  },
-  flatList: {
     flex: 1,
+    backgroundColor: "#fff",
   },
 });
