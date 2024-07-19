@@ -1,47 +1,36 @@
 import React from "react";
-import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { FontAwesome6 } from "@expo/vector-icons";
+import { Category } from "@/api/types";
 import Colors from "@/constants/Colors";
 
-const categories = [
-  { id: "1", name: "Cachorro", icon: "dog" },
-  { id: "2", name: "Gato", icon: "cat" },
-  { id: "3", name: "Pássaros", icon: "crow" },
-  { id: "4", name: "Peixes", icon: "fish" },
-  { id: "5", name: "Outros Pets", icon: "spider" },
-  { id: "6", name: "Casa e Jardim", icon: "sun-plant-wilt" },
-];
+interface CategorySquaresProps {
+  categories: Category[];
+}
 
-const CategorySquares = () => {
+const CategorySquares = ({ categories }: CategorySquaresProps) => {
   return (
     <View style={styles.container}>
-      <View style={styles.categoryContainer}>
-        {categories.map((item) => (
-          <TouchableOpacity key={item.id} style={styles.categoryItem}>
-            <FontAwesome6
-              name={item.icon}
-              size={30}
-              color={Colors["light"].tint}
-            />
-            <Text style={styles.categoryText}>{item.name}</Text>
-          </TouchableOpacity>
-        ))}
-      </View>
+      {categories.map((category) => (
+        <TouchableOpacity key={category.id} style={styles.categoryItem}>
+          <FontAwesome6
+            name={category.icon}
+            size={30}
+            color={Colors["light"].tint}
+          />
+          <Text style={styles.categoryText}>{category.name}</Text>
+        </TouchableOpacity>
+      ))}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 10,
-    backgroundColor: "#fff",
-    width: "96%",
-    margin: "2%",
-  },
-  categoryContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-around",
+    padding: 10,
   },
   categoryItem: {
     alignItems: "center",
@@ -57,7 +46,6 @@ const styles = StyleSheet.create({
     marginTop: 5,
     fontSize: 10,
     textAlign: "center",
-    fontWeight: "bold",
   },
 });
 

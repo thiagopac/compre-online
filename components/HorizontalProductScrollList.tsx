@@ -1,58 +1,39 @@
 import React from "react";
 import {
-  StyleSheet,
   View,
   Text,
-  Image,
   ScrollView,
+  Image,
   TouchableOpacity,
+  StyleSheet,
 } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
+import { Product } from "@/api/types";
 
-const products = [
-  {
-    id: "1",
-    name: "Ração Golden para Cães Adultos Sabor Frango",
-    price: "R$ 134,99",
-    image: require("@/assets/images/mock/dog-food.jpg"),
-    weight: "20 kg",
-  },
-  {
-    id: "2",
-    name: "Ração Golden para Gatos Adultos Sabor Carne",
-    price: "R$ 141,21",
-    image: require("@/assets/images/mock/cat-food.jpg"),
-    weight: "10,1 kg",
-  },
-  {
-    id: "3",
-    name: "Ração para Peixes Tropical",
-    price: "R$ 25,99",
-    image: require("@/assets/images/mock/fish-food.jpg"),
-    weight: "5 kg",
-  },
-  {
-    id: "4",
-    name: "Ração Mega Zoo para Iguana",
-    price: "R$ 102,99",
-    image: require("@/assets/images/mock/iguana-food.jpg"),
-    weight: "15 kg",
-  },
-];
+interface HorizontalProductScrollListProps {
+  title: string;
+  data: Product[];
+}
 
-const HorizontalProductScrollList = () => {
+const HorizontalProductScrollList = ({
+  title,
+  data,
+}: HorizontalProductScrollListProps) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Comprados ou vistos recentemente</Text>
+      <Text style={styles.title}>{title}</Text>
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
         style={styles.scrollView}
       >
-        {products.map((product) => (
+        {data.map((product) => (
           <View key={product.id} style={styles.productCard}>
             <View style={styles.imageWrapper}>
-              <Image source={product.image} style={styles.productImage} />
+              <Image
+                source={{ uri: product.image }}
+                style={styles.productImage}
+              />
             </View>
             <TouchableOpacity style={styles.addButton}>
               <FontAwesome5 name="plus" size={20} color="white" />
@@ -75,7 +56,7 @@ const styles = StyleSheet.create({
     paddingLeft: "4%",
   },
   title: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "bold",
     marginBottom: 10,
   },

@@ -1,59 +1,30 @@
 import React from "react";
 import {
-  StyleSheet,
   View,
   Text,
   Image,
   FlatList,
+  StyleSheet,
   TouchableOpacity,
 } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
+import { Product } from "@/api/types";
 
-const products = [
-  {
-    id: "1",
-    name: "Ração Golden para Cães Adultos Sabor Frango",
-    price: "R$ 134,99",
-    priceOld: "R$ 149,99",
-    image: require("@/assets/images/mock/dog-food.jpg"),
-    weight: "20 kg",
-  },
-  {
-    id: "2",
-    name: "Ração Golden para Gatos Adultos Sabor Carne",
-    price: "R$ 141,21",
-    priceOld: "R$ 159,99",
-    image: require("@/assets/images/mock/cat-food.jpg"),
-    weight: "10,1 kg",
-  },
-  {
-    id: "3",
-    name: "Ração para Peixes Tropical",
-    price: "R$ 25,99",
-    priceOld: "R$ 29,99",
-    image: require("@/assets/images/mock/fish-food.jpg"),
-    weight: "5 kg",
-  },
-  {
-    id: "4",
-    name: "Ração Mega Zoo para Iguana",
-    price: "R$ 102,99",
-    priceOld: "R$ 119,99",
-    image: require("@/assets/images/mock/iguana-food.jpg"),
-    weight: "15 kg",
-  },
-];
+interface VerticalProductListProps {
+  title: string;
+  data: Product[];
+}
 
-const VerticalProductList = () => {
+const VerticalProductList = ({ title, data }: VerticalProductListProps) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Nossa linha exclusiva</Text>
+      <Text style={styles.title}>{title}</Text>
       <FlatList
-        data={products}
-        keyExtractor={(item) => item.id}
+        data={data}
+        keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <View style={styles.productCard}>
-            <Image source={item.image} style={styles.productImage} />
+            <Image source={{ uri: item.image }} style={styles.productImage} />
             <View style={styles.productDetails}>
               <Text style={styles.weightBadge}>{item.weight}</Text>
               <Text style={styles.productName}>{item.name}</Text>
@@ -79,7 +50,7 @@ const styles = StyleSheet.create({
     padding: "4%",
   },
   title: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: "bold",
     marginBottom: 10,
   },
@@ -101,18 +72,6 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
     marginRight: 5,
   },
-  weightBadge: {
-    position: "absolute",
-    left: -85,
-    bottom: -10,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    color: "white",
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    overflow: "hidden",
-    borderRadius: 5,
-    fontSize: 12,
-  },
   productDetails: {
     flex: 1,
     justifyContent: "space-between",
@@ -120,6 +79,7 @@ const styles = StyleSheet.create({
   },
   productName: {
     fontSize: 16,
+    fontWeight: "bold",
   },
   prices: {
     flexDirection: "column",
@@ -146,6 +106,18 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: 0,
     bottom: -10,
+  },
+  weightBadge: {
+    position: "absolute",
+    left: -85,
+    bottom: -10,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    color: "white",
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    overflow: "hidden",
+    borderRadius: 5,
+    fontSize: 12,
   },
 });
 
