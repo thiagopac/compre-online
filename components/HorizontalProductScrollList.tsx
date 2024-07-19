@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { Product } from "@/api/types";
+import { useCart } from "@/context/CartContext";
 
 interface HorizontalProductScrollListProps {
   title: string;
@@ -19,6 +20,8 @@ const HorizontalProductScrollList = ({
   title,
   data,
 }: HorizontalProductScrollListProps) => {
+  const { addToCart } = useCart();
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{title}</Text>
@@ -35,7 +38,10 @@ const HorizontalProductScrollList = ({
                 style={styles.productImage}
               />
             </View>
-            <TouchableOpacity style={styles.addButton}>
+            <TouchableOpacity
+              style={styles.addButton}
+              onPress={() => addToCart(product)}
+            >
               <FontAwesome5 name="plus" size={20} color="white" />
             </TouchableOpacity>
             <Text style={styles.weightBadge}>{product.weight}</Text>

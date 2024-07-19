@@ -11,18 +11,16 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import { Product } from "@/api/types";
 import { useCart } from "@/context/CartContext";
 
-interface VerticalProductListProps {
+interface CartProductListProps {
   title: string;
   data: Product[];
 }
 
-const VerticalProductList = ({ title, data }: VerticalProductListProps) => {
-  const { addToCart } = useCart();
+const CartProductList = ({ title, data }: CartProductListProps) => {
+  const { removeFromCart } = useCart();
 
   return (
     <View style={styles.container}>
-      {title && title.length > 0 && <Text style={styles.title}>{title}</Text>}
-
       <FlatList
         data={data}
         keyExtractor={(item) => item.id.toString()}
@@ -37,10 +35,10 @@ const VerticalProductList = ({ title, data }: VerticalProductListProps) => {
                 <Text style={styles.productPrice}>{item.price}</Text>
               </View>
               <TouchableOpacity
-                style={styles.addButton}
-                onPress={() => addToCart(item)}
+                style={styles.removeButton}
+                onPress={() => removeFromCart(item.id)}
               >
-                <FontAwesome5 name="plus" size={20} color="white" />
+                <FontAwesome5 name="trash" size={20} color="white" />
               </TouchableOpacity>
             </View>
           </View>
@@ -54,7 +52,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    padding: "4%",
+    paddingHorizontal: "4%",
   },
   title: {
     fontSize: 20,
@@ -67,7 +65,7 @@ const styles = StyleSheet.create({
     paddingRight: 10,
     paddingBottom: 20,
     paddingTop: 10,
-    marginBottom: 10,
+    marginTop: 10,
     backgroundColor: "#fff",
     borderRadius: 10,
     borderWidth: 1,
@@ -101,8 +99,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "black",
   },
-  addButton: {
-    backgroundColor: "black",
+  removeButton: {
+    backgroundColor: "red",
     padding: 10,
     borderRadius: 25,
     width: 50,
@@ -128,4 +126,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default VerticalProductList;
+export default CartProductList;

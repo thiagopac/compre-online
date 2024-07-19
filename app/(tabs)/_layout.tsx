@@ -7,8 +7,8 @@ import Colors from "@/constants/Colors";
 import { useColorScheme } from "@/components/useColorScheme";
 import { useClientOnlyValue } from "@/components/useClientOnlyValue";
 import { StatusBar } from "expo-status-bar";
+import { CartProvider } from "@/context/CartContext";
 
-// You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome6>["name"];
   color: string;
@@ -31,7 +31,6 @@ const MenuButton = () => (
         <FontAwesome
           name="bars"
           size={25}
-          // color={Colors[colorScheme ?? "light"].text}
           color={Colors["light"].text}
           style={{ marginLeft: 15, opacity: pressed ? 0.5 : 1 }}
         />
@@ -46,47 +45,46 @@ export default function TabLayout() {
   return (
     <>
       <StatusBar style={Platform.OS === "ios" ? "dark" : "auto"} />
-      <Tabs
-        screenOptions={{
-          // tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
-          tabBarActiveTintColor: Colors["light"].tint,
-          // Disable the static render of the header on web
-          // to prevent a hydration error in React Navigation v6.
-          headerShown: useClientOnlyValue(false, true),
-          headerTitle: () => <NavBarTitle />,
-        }}
-      >
-        <Tabs.Screen
-          name="index"
-          options={{
-            title: "Loja",
-            tabBarIcon: ({ color }) => (
-              <TabBarIcon name="store" color={color} />
-            ),
-            headerLeft: MenuButton,
+      <CartProvider>
+        <Tabs
+          screenOptions={{
+            tabBarActiveTintColor: Colors["light"].tint,
+            headerShown: useClientOnlyValue(false, true),
+            headerTitle: () => <NavBarTitle />,
           }}
-        />
-        <Tabs.Screen
-          name="rebuy"
-          options={{
-            title: "Recompra",
-            tabBarIcon: ({ color }) => (
-              <TabBarIcon name="repeat" color={color} />
-            ),
-            headerLeft: MenuButton,
-          }}
-        />
-        <Tabs.Screen
-          name="cart"
-          options={{
-            title: "Sacola",
-            tabBarIcon: ({ color }) => (
-              <TabBarIcon name="bag-shopping" color={color} />
-            ),
-            headerLeft: MenuButton,
-          }}
-        />
-      </Tabs>
+        >
+          <Tabs.Screen
+            name="index"
+            options={{
+              title: "Loja",
+              tabBarIcon: ({ color }) => (
+                <TabBarIcon name="store" color={color} />
+              ),
+              headerLeft: MenuButton,
+            }}
+          />
+          <Tabs.Screen
+            name="rebuy"
+            options={{
+              title: "Recompra",
+              tabBarIcon: ({ color }) => (
+                <TabBarIcon name="repeat" color={color} />
+              ),
+              headerLeft: MenuButton,
+            }}
+          />
+          <Tabs.Screen
+            name="cart"
+            options={{
+              title: "Sacola",
+              tabBarIcon: ({ color }) => (
+                <TabBarIcon name="bag-shopping" color={color} />
+              ),
+              headerLeft: MenuButton,
+            }}
+          />
+        </Tabs>
+      </CartProvider>
     </>
   );
 }
