@@ -2,18 +2,16 @@ import React, { useState } from "react";
 import {
   View,
   Text,
-  ScrollView,
   Image,
   TouchableOpacity,
   StyleSheet,
+  ScrollView,
   Modal,
-  Dimensions,
 } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { Product } from "@/api/types";
 import ProductDetails from "@/app/ProductDetails";
-
-const { height } = Dimensions.get("window");
+import Colors from "@/constants/Colors";
 
 interface HorizontalProductScrollListProps {
   title: string;
@@ -87,7 +85,7 @@ const styles = StyleSheet.create({
   container: {
     marginTop: 20,
     marginBottom: 20,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.productList.backgroundColor,
     paddingLeft: "4%",
   },
   title: {
@@ -102,7 +100,7 @@ const styles = StyleSheet.create({
     width: 160,
     height: 270,
     marginRight: 15,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.productList.backgroundColor,
     overflow: "hidden",
     paddingBottom: 30,
   },
@@ -111,7 +109,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 20,
     borderWidth: 1,
-    borderColor: "#dfdfdf",
+    borderColor: Colors.productList.borderColor,
   },
   productImage: {
     width: "100%",
@@ -123,8 +121,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: 10,
     top: 10,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    color: "white",
+    backgroundColor: Colors.productList.badgeBackgroundColor,
+    color: Colors.productList.badgeTextColor,
     paddingVertical: 5,
     paddingHorizontal: 10,
     overflow: "hidden",
@@ -135,7 +133,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: 6,
     bottom: 80,
-    backgroundColor: "black",
+    backgroundColor: Colors.productList.addButtonColor,
     padding: 10,
     borderRadius: 25,
     width: 50,
@@ -154,7 +152,7 @@ const styles = StyleSheet.create({
   productPrice: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#333",
+    color: Colors.productList.priceColor,
     marginTop: 5,
     marginLeft: 6,
   },

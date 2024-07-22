@@ -16,7 +16,7 @@ const CategorySquares = ({ categories }: CategorySquaresProps) => {
           <FontAwesome6
             name={category.icon}
             size={30}
-            color={Colors["light"].tint}
+            color={Colors.category.textColor}
           />
           <Text style={styles.categoryText}>{category.name}</Text>
         </TouchableOpacity>
@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     margin: 4,
-    backgroundColor: "#f0f0f0",
+    backgroundColor: Colors.category.itemBackground,
     borderRadius: 10,
     padding: 10,
     width: 116,

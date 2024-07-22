@@ -10,6 +10,7 @@ import {
 import { AntDesign, FontAwesome6 } from "@expo/vector-icons";
 import { Product, ProductOption } from "@/api/types";
 import { useCart } from "@/context/CartContext";
+import Colors from "@/constants/Colors";
 
 interface ProductDetailsProps {
   product: Product;
@@ -35,7 +36,11 @@ const ProductDetails = ({ product, closeModal }: ProductDetailsProps) => {
           style={{ position: "absolute", top: 10, right: 10, zIndex: 10 }}
           onPress={closeModal}
         >
-          <AntDesign name="close" size={24} color="black" />
+          <AntDesign
+            name="close"
+            size={24}
+            color={Colors.productDetails.textColor}
+          />
         </TouchableOpacity>
         <Text style={styles.pageTitle}>Detalhes do Produto</Text>
         <Image source={{ uri: product.image }} style={styles.image} />
@@ -86,7 +91,7 @@ const ProductDetails = ({ product, closeModal }: ProductDetailsProps) => {
           <FontAwesome6
             name="cart-plus"
             size={18}
-            color="white"
+            color={Colors.productDetails.buttonText}
             style={{ marginRight: 8 }}
           />
           <Text style={styles.addToCartText}>Adicionar à sacola</Text>
@@ -102,7 +107,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   container: {
-    backgroundColor: "white",
+    backgroundColor: Colors.productDetails.backgroundColor,
     paddingHorizontal: 20,
     paddingTop: 20,
     paddingBottom: 40,
@@ -114,6 +119,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginTop: 10,
     textAlign: "left",
+    color: Colors.productDetails.pageTitleColor,
   },
   image: {
     width: "100%",
@@ -125,11 +131,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     textAlign: "left",
     marginTop: 20,
+    color: Colors.productDetails.textColor,
   },
   price: {
     fontSize: 25,
     fontWeight: "bold",
-    color: "#000",
+    color: Colors.productDetails.textColor,
     marginBottom: 10,
   },
   optionsContainer: {
@@ -138,24 +145,32 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   option: {
-    backgroundColor: "#f0f0f0",
+    backgroundColor: Colors.productDetails.unselectedOptionBackground,
     borderRadius: 5,
     padding: 20,
     marginHorizontal: 5,
+    minWidth: 100,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   },
   optionSelected: {
-    backgroundColor: "black",
+    backgroundColor: Colors.productDetails.selectedOptionBackground,
     borderRadius: 5,
     marginHorizontal: 5,
     padding: 20,
+    minWidth: 100,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   },
   optionText: {
     fontSize: 18,
-    color: "#000",
+    color: Colors.productDetails.unselectedOptionText,
   },
   optionTextSelected: {
     fontSize: 18,
-    color: "white",
+    color: Colors.productDetails.selectedOptionText,
   },
   quantityControl: {
     flexDirection: "row",
@@ -164,7 +179,7 @@ const styles = StyleSheet.create({
     marginTop: 30,
   },
   controlButton: {
-    backgroundColor: "#ddd",
+    backgroundColor: Colors.productDetails.controlButtonBackground,
     width: 40,
     height: 40,
     borderRadius: 20,
@@ -174,13 +189,15 @@ const styles = StyleSheet.create({
   },
   controlText: {
     fontSize: 24,
+    color: Colors.productDetails.controlTextColor,
   },
   quantityText: {
     marginHorizontal: 20,
     fontSize: 20,
+    color: Colors.productDetails.textColor,
   },
   addToCartButton: {
-    backgroundColor: "black",
+    backgroundColor: Colors.productDetails.buttonBackground,
     paddingVertical: 15,
     borderRadius: 5,
     marginTop: 50,
@@ -189,7 +206,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   addToCartText: {
-    color: "white",
+    color: Colors.productDetails.buttonText,
     fontSize: 18,
     textAlign: "center",
     fontWeight: "bold",

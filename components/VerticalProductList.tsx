@@ -9,8 +9,9 @@ import {
   Modal,
 } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
-import { Product, ProductOption } from "@/api/types";
+import { Product } from "@/api/types";
 import ProductDetails from "@/app/ProductDetails";
+import Colors from "@/constants/Colors";
 
 interface VerticalProductListProps {
   title: string;
@@ -78,7 +79,7 @@ const VerticalProductList = ({ title, data }: VerticalProductListProps) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.productList.backgroundColor,
     padding: "4%",
   },
   title: {
@@ -89,11 +90,11 @@ const styles = StyleSheet.create({
   productCard: {
     flexDirection: "row",
     padding: 10,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.productList.backgroundColor,
     marginBottom: 10,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: "#dfdfdf",
+    borderColor: Colors.productList.borderColor,
     overflow: "hidden",
   },
   productImage: {
@@ -112,11 +113,11 @@ const styles = StyleSheet.create({
   productPrice: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#333",
+    color: Colors.productList.priceColor,
   },
   weightBadge: {
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    color: "white",
+    backgroundColor: Colors.productList.badgeBackgroundColor,
+    color: Colors.productList.badgeTextColor,
     paddingVertical: 5,
     width: 50,
     textAlign: "center",
@@ -128,7 +129,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: 10,
     bottom: 10,
-    backgroundColor: "black",
+    backgroundColor: Colors.productList.addButtonColor,
     padding: 10,
     borderRadius: 25,
     width: 50,

@@ -10,6 +10,7 @@ import {
 import { FontAwesome5 } from "@expo/vector-icons";
 import { Product } from "@/api/types";
 import { useCart } from "@/context/CartContext";
+import Colors from "@/constants/Colors";
 
 interface CartProductListProps {
   title: string;
@@ -99,7 +100,7 @@ const styles = StyleSheet.create({
     color: "black",
   },
   removeButton: {
-    backgroundColor: "red",
+    backgroundColor: Colors.cart.removeProductButtonBackgroundColor,
     padding: 10,
     borderRadius: 25,
     width: 50,

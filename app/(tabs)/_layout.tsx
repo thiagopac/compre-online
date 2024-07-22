@@ -7,6 +7,7 @@ import Colors from "@/constants/Colors";
 import { useColorScheme } from "@/components/useColorScheme";
 import { StatusBar } from "expo-status-bar";
 import { CartProvider } from "@/context/CartContext";
+import Images from "@/constants/Images";
 
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome6>["name"];
@@ -17,7 +18,7 @@ function TabBarIcon(props: {
 
 const NavBarTitle = () => (
   <Image
-    source={require("@/assets/images/logo-color.png")}
+    source={Images.logo.colored}
     style={{ width: 100, height: 40 }}
     resizeMode="contain"
   />
@@ -30,7 +31,7 @@ const MenuButton = () => (
         <FontAwesome
           name="bars"
           size={25}
-          color={Colors["light"].text}
+          color={Colors.text.primary}
           style={{ marginLeft: 15, opacity: pressed ? 0.5 : 1 }}
         />
       )}
@@ -47,7 +48,7 @@ export default function TabLayout() {
       <CartProvider>
         <Tabs
           screenOptions={{
-            tabBarActiveTintColor: Colors["light"].tint,
+            tabBarActiveTintColor: Colors.tab.activeTintColor,
             headerShown: true,
             headerTitle: () => <NavBarTitle />,
           }}

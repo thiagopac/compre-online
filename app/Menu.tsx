@@ -12,6 +12,7 @@ import { StatusBar } from "expo-status-bar";
 import { useNavigation } from "@react-navigation/native";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import Colors from "@/constants/Colors";
 
 export default function Menu() {
   const navigation = useNavigation();
@@ -21,8 +22,9 @@ export default function Menu() {
   };
 
   const handleLogout = () => {
-    Alert.alert("Logout", "Logout efetuado com sucesso", [
-      { text: "OK", onPress: () => console.log("OK Pressed") },
+    Alert.alert("Logout", "Deseja realmente sair?", [
+      { text: "Cancelar", onPress: () => console.log("Cancel Pressed") },
+      { text: "Sair", onPress: () => navigation.navigate("Login" as never) },
     ]);
   };
 
@@ -86,7 +88,7 @@ const styles = StyleSheet.create({
   },
   icon: {
     marginRight: 20,
-    color: "#000",
+    color: Colors.menu.iconTintColor,
   },
   menuText: {
     fontSize: 18,
@@ -100,7 +102,7 @@ const styles = StyleSheet.create({
   logoutButton: {
     flexDirection: "row",
     justifyContent: "space-between",
-    backgroundColor: "red",
+    backgroundColor: Colors.menu.logoutButtonColor,
     padding: 10,
     borderRadius: 10,
     alignItems: "center",
