@@ -5,7 +5,6 @@ import { Link, Tabs } from "expo-router";
 import { Pressable, Image, Platform } from "react-native";
 import Colors from "@/constants/Colors";
 import { useColorScheme } from "@/components/useColorScheme";
-import { useClientOnlyValue } from "@/components/useClientOnlyValue";
 import { StatusBar } from "expo-status-bar";
 import { CartProvider } from "@/context/CartContext";
 
@@ -49,7 +48,7 @@ export default function TabLayout() {
         <Tabs
           screenOptions={{
             tabBarActiveTintColor: Colors["light"].tint,
-            headerShown: useClientOnlyValue(false, true),
+            headerShown: true,
             headerTitle: () => <NavBarTitle />,
           }}
         >
