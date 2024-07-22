@@ -1,9 +1,19 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
-import { Product } from "@/api/types";
+import { Product, ProductOption } from "@/api/types";
+
+interface CartItem {
+  product: Product;
+  quantity: number;
+  selectedOption: ProductOption;
+}
 
 interface CartContextProps {
-  cart: Product[];
-  addToCart: (product: Product) => void;
+  cart: CartItem[];
+  addToCart: (
+    product: Product,
+    quantity: number,
+    selectedOption: ProductOption
+  ) => void;
   removeFromCart: (productId: string) => void;
   clearCart: () => void;
 }
@@ -11,23 +21,35 @@ interface CartContextProps {
 const CartContext = createContext<CartContextProps | undefined>(undefined);
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
-  const [cart, setCart] = useState<Product[]>([]);
+  const [cart, setCart] = useState<CartItem[]>([]);
 
-  const addToCart = (product: Product) => {
-    console.log("Adding to cart:", product);
+  const addToCart = (
+    product: Product,
+    quantity: number,
+    selectedOption: ProductOption
+  ) => {
+    const existingIndex = cart.findIndex(
+      (item) =>
+        item.product.id === product.id &&
+        item.selectedOption.weight === selectedOption.weight
+    );
 
     setCart((prevCart) => {
-      if (prevCart.some((item) => item.id === product.id)) {
-        return prevCart;
+      if (existingIndex > -1) {
+        const newCart = [...prevCart];
+        newCart[existingIndex] = {
+          ...newCart[existingIndex],
+          quantity: newCart[existingIndex].quantity + quantity,
+        };
+        return newCart;
       }
-
-      return [...prevCart, product];
+      return [...prevCart, { product, quantity, selectedOption }];
     });
   };
 
   const removeFromCart = (productId: string) => {
     setCart((prevCart) =>
-      prevCart.filter((product) => product.id !== productId)
+      prevCart.filter((item) => item.product.id !== productId)
     );
   };
 

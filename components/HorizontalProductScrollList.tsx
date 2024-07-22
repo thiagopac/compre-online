@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -6,10 +6,14 @@ import {
   Image,
   TouchableOpacity,
   StyleSheet,
+  Modal,
+  Dimensions,
 } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { Product } from "@/api/types";
-import { useCart } from "@/context/CartContext";
+import ProductDetails from "@/app/ProductDetails";
+
+const { height } = Dimensions.get("window");
 
 interface HorizontalProductScrollListProps {
   title: string;
@@ -20,7 +24,17 @@ const HorizontalProductScrollList = ({
   title,
   data,
 }: HorizontalProductScrollListProps) => {
-  const { addToCart } = useCart();
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+
+  const openModal = (product: Product) => {
+    setSelectedProduct(product);
+    setModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setModalVisible(false);
+  };
 
   return (
     <View style={styles.container}>
@@ -30,26 +44,41 @@ const HorizontalProductScrollList = ({
         showsHorizontalScrollIndicator={false}
         style={styles.scrollView}
       >
-        {data.map((product) => (
+        {data.map((product: Product) => (
           <View key={product.id} style={styles.productCard}>
-            <View style={styles.imageWrapper}>
+            <TouchableOpacity
+              style={styles.imageWrapper}
+              onPress={() => openModal(product)}
+            >
               <Image
                 source={{ uri: product.image }}
                 style={styles.productImage}
               />
-            </View>
+            </TouchableOpacity>
+            <Text style={styles.productName}>{product.name}</Text>
+            <Text style={styles.productPrice}>
+              R$ {product.options[0].price}
+            </Text>
+            <Text style={styles.weightBadge}>{product.options[0].weight}</Text>
             <TouchableOpacity
               style={styles.addButton}
-              onPress={() => addToCart(product)}
+              onPress={() => openModal(product)}
             >
               <FontAwesome5 name="plus" size={20} color="white" />
             </TouchableOpacity>
-            <Text style={styles.weightBadge}>{product.weight}</Text>
-            <Text style={styles.productName}>{product.name}</Text>
-            <Text style={styles.productPrice}>{product.price}</Text>
           </View>
         ))}
       </ScrollView>
+      <Modal
+        animationType="slide"
+        visible={modalVisible}
+        onRequestClose={closeModal}
+        presentationStyle="pageSheet"
+      >
+        {selectedProduct && (
+          <ProductDetails product={selectedProduct} closeModal={closeModal} />
+        )}
+      </Modal>
     </View>
   );
 };
@@ -90,6 +119,18 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
     marginBottom: 5,
   },
+  weightBadge: {
+    position: "absolute",
+    left: 10,
+    top: 10,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    color: "white",
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    overflow: "hidden",
+    borderRadius: 5,
+    fontSize: 12,
+  },
   addButton: {
     position: "absolute",
     right: 6,
@@ -103,18 +144,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  weightBadge: {
-    position: "absolute",
-    left: 10,
-    top: 10,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    color: "white",
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    overflow: "hidden",
-    borderRadius: 5,
-    fontSize: 12,
-  },
   productName: {
     fontSize: 12,
     textAlign: "left",
@@ -123,7 +152,6 @@ const styles = StyleSheet.create({
     marginLeft: 6,
   },
   productPrice: {
-    width: "100%",
     fontSize: 18,
     fontWeight: "bold",
     color: "#333",

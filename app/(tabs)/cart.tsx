@@ -1,9 +1,9 @@
 import React from "react";
-import { StyleSheet, FlatList, View, Text, Button } from "react-native";
+import { ScrollView, StyleSheet, View, Text, Button } from "react-native";
 import CartProductList from "@/components/CartProductList";
 import { useCart } from "@/context/CartContext";
 
-export default function TabCartScreen() {
+const TabCartScreen = () => {
   const { cart, clearCart } = useCart();
 
   if (cart.length === 0) {
@@ -16,18 +16,15 @@ export default function TabCartScreen() {
 
   return (
     <View style={styles.container}>
-      <FlatList
-        data={cart}
-        renderItem={({ item }) => <CartProductList title="" data={[item]} />}
-        keyExtractor={(item) => item.id.toString()}
-        style={styles.flatList}
-      />
-      <View style={styles.buttonContainer}>
-        <Button title="Esvaziar Carrinho" onPress={clearCart} />
-      </View>
+      <ScrollView>
+        <CartProductList />
+        <View style={styles.buttonContainer}>
+          <Button title="Esvaziar Carrinho" onPress={clearCart} />
+        </View>
+      </ScrollView>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   emptyContainer: {
@@ -43,13 +40,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
   },
-  flatList: {
-    flex: 1,
-  },
   buttonContainer: {
     padding: 10,
     backgroundColor: "#fff",
-    borderTopWidth: 1,
-    borderColor: "#dfdfdf",
   },
 });
+
+export default TabCartScreen;

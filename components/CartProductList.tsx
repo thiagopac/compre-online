@@ -16,34 +16,33 @@ interface CartProductListProps {
   data: Product[];
 }
 
-const CartProductList = ({ title, data }: CartProductListProps) => {
-  const { removeFromCart } = useCart();
+const CartProductList = () => {
+  const { cart, removeFromCart } = useCart();
 
   return (
     <View style={styles.container}>
-      <FlatList
-        data={data}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.productCard}>
-            <Image source={{ uri: item.image }} style={styles.productImage} />
-            <View style={styles.productDetails}>
-              <Text style={styles.weightBadge}>{item.weight}</Text>
-              <Text style={styles.productName}>{item.name}</Text>
-              <View style={styles.prices}>
-                <Text style={styles.productPriceOld}>{item.priceOld}</Text>
-                <Text style={styles.productPrice}>{item.price}</Text>
-              </View>
-              <TouchableOpacity
-                style={styles.removeButton}
-                onPress={() => removeFromCart(item.id)}
-              >
-                <FontAwesome5 name="trash" size={20} color="white" />
-              </TouchableOpacity>
-            </View>
+      {cart.map((item, index) => (
+        <View key={index} style={styles.productCard}>
+          <Image
+            source={{ uri: item.product.image }}
+            style={styles.productImage}
+          />
+          <View style={styles.productDetails}>
+            <Text style={styles.productName}>{item.product.name}</Text>
+            <Text style={styles.weightBadge}>{item.selectedOption.weight}</Text>
+            <Text style={styles.productPrice}>
+              R$ {item.selectedOption.price}
+            </Text>
+            <Text>Quantidade: {item.quantity}</Text>
+            <TouchableOpacity
+              onPress={() => removeFromCart(item.product.id)}
+              style={styles.removeButton}
+            >
+              <FontAwesome5 name="trash" size={20} color="white" />
+            </TouchableOpacity>
           </View>
-        )}
-      />
+        </View>
+      ))}
     </View>
   );
 };
@@ -84,7 +83,7 @@ const styles = StyleSheet.create({
   },
   productName: {
     fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: "regular",
   },
   prices: {
     flexDirection: "column",

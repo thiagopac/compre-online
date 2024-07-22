@@ -1,15 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
   Image,
-  FlatList,
-  StyleSheet,
   TouchableOpacity,
+  StyleSheet,
+  FlatList,
+  Modal,
 } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
-import { Product } from "@/api/types";
-import { useCart } from "@/context/CartContext";
+import { Product, ProductOption } from "@/api/types";
+import ProductDetails from "@/app/ProductDetails";
 
 interface VerticalProductListProps {
   title: string;
@@ -17,35 +18,59 @@ interface VerticalProductListProps {
 }
 
 const VerticalProductList = ({ title, data }: VerticalProductListProps) => {
-  const { addToCart } = useCart();
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+
+  const openModal = (product: Product) => {
+    setSelectedProduct(product);
+    setModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setModalVisible(false);
+  };
 
   return (
     <View style={styles.container}>
-      {title && title.length > 0 && <Text style={styles.title}>{title}</Text>}
+      {title && <Text style={styles.title}>{title}</Text>}
 
       <FlatList
         data={data}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <View style={styles.productCard}>
-            <Image source={{ uri: item.image }} style={styles.productImage} />
-            <View style={styles.productDetails}>
-              <Text style={styles.weightBadge}>{item.weight}</Text>
-              <Text style={styles.productName}>{item.name}</Text>
-              <View style={styles.prices}>
-                <Text style={styles.productPriceOld}>{item.priceOld}</Text>
-                <Text style={styles.productPrice}>{item.price}</Text>
+            <TouchableOpacity
+              onPress={() => openModal(item)}
+              style={{ flexDirection: "row", flex: 1 }}
+            >
+              <Image source={{ uri: item.image }} style={styles.productImage} />
+              <View style={styles.productDetails}>
+                <Text style={styles.productName}>{item.name}</Text>
+                <Text style={styles.productPrice}>
+                  R$ {item.options[0].price}
+                </Text>
+                <Text style={styles.weightBadge}>{item.options[0].weight}</Text>
               </View>
-              <TouchableOpacity
-                style={styles.addButton}
-                onPress={() => addToCart(item)}
-              >
-                <FontAwesome5 name="plus" size={20} color="white" />
-              </TouchableOpacity>
-            </View>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.addButton}
+              onPress={() => openModal(item)}
+            >
+              <FontAwesome5 name="plus" size={20} color="white" />
+            </TouchableOpacity>
           </View>
         )}
       />
+      <Modal
+        animationType="slide"
+        visible={modalVisible}
+        onRequestClose={closeModal}
+        presentationStyle="pageSheet"
+      >
+        {selectedProduct && (
+          <ProductDetails product={selectedProduct} closeModal={closeModal} />
+        )}
+      </Modal>
     </View>
   );
 };
@@ -63,68 +88,53 @@ const styles = StyleSheet.create({
   },
   productCard: {
     flexDirection: "row",
-    paddingLeft: 0,
-    paddingRight: 10,
-    paddingBottom: 20,
-    paddingTop: 10,
-    marginBottom: 10,
+    padding: 10,
     backgroundColor: "#fff",
+    marginBottom: 10,
     borderRadius: 10,
     borderWidth: 1,
     borderColor: "#dfdfdf",
+    overflow: "hidden",
   },
   productImage: {
     width: 100,
     height: 100,
     resizeMode: "contain",
-    marginRight: 5,
   },
   productDetails: {
     flex: 1,
-    justifyContent: "space-between",
-    marginLeft: -10,
+    justifyContent: "space-around",
   },
   productName: {
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  prices: {
-    flexDirection: "column",
-  },
-  productPriceOld: {
-    fontSize: 16,
-    textDecorationLine: "line-through",
-    color: "#999",
+    fontSize: 14,
+    fontWeight: "regular",
   },
   productPrice: {
-    fontSize: 19,
+    fontSize: 18,
     fontWeight: "bold",
-    color: "black",
+    color: "#333",
+  },
+  weightBadge: {
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    color: "white",
+    paddingVertical: 5,
+    width: 50,
+    textAlign: "center",
+    borderRadius: 5,
+    overflow: "hidden",
+    fontSize: 12,
   },
   addButton: {
+    position: "absolute",
+    right: 10,
+    bottom: 10,
     backgroundColor: "black",
     padding: 10,
     borderRadius: 25,
     width: 50,
     height: 50,
-    display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    position: "absolute",
-    right: 0,
-    bottom: -10,
-  },
-  weightBadge: {
-    position: "absolute",
-    left: -85,
-    bottom: -10,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    color: "white",
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    overflow: "hidden",
-    borderRadius: 5,
-    fontSize: 12,
   },
 });
 

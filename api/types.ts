@@ -4,13 +4,16 @@ export interface Category {
   icon: string;
 }
 
+export interface ProductOption {
+  weight: string;
+  price: string;
+}
+
 export interface Product {
   id: string;
   name: string;
-  price: string;
-  priceOld?: string;
   image: string;
-  weight: string;
+  options: ProductOption[];
 }
 
 export interface ProductList {
