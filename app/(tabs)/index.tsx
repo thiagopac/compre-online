@@ -6,9 +6,10 @@ import SearchInput from "@/components/SearchInput";
 import CategorySquares from "@/components/CategorySquares";
 import HorizontalProductScrollList from "@/components/HorizontalProductScrollList";
 import VerticalProductList from "@/components/VerticalProductList";
+import Loading from "@/components/Loading";
 
 const TabStoreScreen = () => {
-  const [homeData, setHomeData] = useState<StoreData | null>(null);
+  const [storeData, setStoreData] = useState<StoreData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -16,7 +17,7 @@ const TabStoreScreen = () => {
     const loadData = async () => {
       try {
         const data = await fetchStoreData();
-        setHomeData(data);
+        setStoreData(data);
       } catch (e) {
         setError("Unable to fetch data");
       }
@@ -48,7 +49,7 @@ const TabStoreScreen = () => {
     }
   };
 
-  if (loading) return <Text>Carregando...</Text>;
+  if (loading) return <Loading />;
   if (error) return <Text>Error: {error}</Text>;
 
   return (
@@ -56,10 +57,10 @@ const TabStoreScreen = () => {
       ListHeaderComponent={() => (
         <View style={styles.categoriesContainer}>
           <SearchInput />
-          {homeData && <CategorySquares categories={homeData.categories} />}
+          {storeData && <CategorySquares categories={storeData.categories} />}
         </View>
       )}
-      data={homeData?.productLists}
+      data={storeData?.productLists}
       renderItem={renderItem}
       keyExtractor={(item) => item.title}
       style={styles.flatList}

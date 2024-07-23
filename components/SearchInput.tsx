@@ -1,13 +1,27 @@
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet, TextInput, View } from "react-native";
+import { useRouter } from "expo-router";
 
 const SearchInput = () => {
+  const [searchText, setSearchText] = useState("");
+  const router = useRouter();
+
+  const handleSearchSubmit = () => {
+    router.push({
+      pathname: "/SearchResults",
+      params: { query: searchText },
+    });
+  };
+
   return (
     <View style={styles.searchContainer}>
       <TextInput
         placeholder="O que seu pet precisa?"
         placeholderTextColor={"#666"}
         style={styles.searchInput}
+        value={searchText}
+        onChangeText={setSearchText}
+        onSubmitEditing={handleSearchSubmit}
       />
     </View>
   );

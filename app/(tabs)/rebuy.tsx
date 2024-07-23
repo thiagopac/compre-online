@@ -3,6 +3,7 @@ import { StyleSheet, View, Text } from "react-native";
 import { RebuyData, Product } from "@/api/types";
 import { fetchRebuyData } from "@/api/rebuyApi";
 import VerticalProductList from "@/components/VerticalProductList";
+import Loading from "@/components/Loading";
 
 export default function TabRebuyScreen() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -27,7 +28,7 @@ export default function TabRebuyScreen() {
     loadData();
   }, []);
 
-  if (loading) return <Text>Carregando...</Text>;
+  if (loading) return <Loading />;
   if (error) return <Text>Error: {error}</Text>;
 
   return (

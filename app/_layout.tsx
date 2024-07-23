@@ -1,3 +1,4 @@
+import { CartProvider } from "@/context/CartContext";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { useFonts } from "expo-font";
@@ -34,7 +35,11 @@ export default function RootLayout() {
     return null;
   }
 
-  return <RootLayoutNav />;
+  return (
+    <CartProvider>
+      <RootLayoutNav />
+    </CartProvider>
+  );
 }
 
 function RootLayoutNav() {
@@ -47,6 +52,14 @@ function RootLayoutNav() {
         <Stack.Screen
           name="ProductDetails"
           options={{ presentation: "modal" }}
+        />
+        <Stack.Screen
+          name="CategoryProductsScreen"
+          options={{ title: "Resultados", headerBackTitle: "Voltar" }}
+        />
+        <Stack.Screen
+          name="SearchResults"
+          options={{ title: "Resultados da Busca", headerBackTitle: "Voltar" }}
         />
       </Stack>
     </ThemeProvider>

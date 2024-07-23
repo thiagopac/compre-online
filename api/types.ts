@@ -2,6 +2,7 @@ export interface Category {
   id: string;
   name: string;
   icon: string;
+  key: string;
 }
 
 export interface ProductOption {
@@ -14,6 +15,7 @@ export interface Product {
   name: string;
   image: string;
   options: ProductOption[];
+  recommendedFor: string;
 }
 
 export interface ProductList {

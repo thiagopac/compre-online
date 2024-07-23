@@ -45,46 +45,44 @@ export default function TabLayout() {
   return (
     <>
       <StatusBar style={Platform.OS === "ios" ? "dark" : "auto"} />
-      <CartProvider>
-        <Tabs
-          screenOptions={{
-            tabBarActiveTintColor: Colors.tab.activeTintColor,
-            headerShown: true,
-            headerTitle: () => <NavBarTitle />,
+      <Tabs
+        screenOptions={{
+          tabBarActiveTintColor: Colors.tab.activeTintColor,
+          headerShown: true,
+          headerTitle: () => <NavBarTitle />,
+        }}
+      >
+        <Tabs.Screen
+          name="index"
+          options={{
+            title: "Loja",
+            tabBarIcon: ({ color }) => (
+              <TabBarIcon name="store" color={color} />
+            ),
+            headerLeft: MenuButton,
           }}
-        >
-          <Tabs.Screen
-            name="index"
-            options={{
-              title: "Loja",
-              tabBarIcon: ({ color }) => (
-                <TabBarIcon name="store" color={color} />
-              ),
-              headerLeft: MenuButton,
-            }}
-          />
-          <Tabs.Screen
-            name="rebuy"
-            options={{
-              title: "Recompra",
-              tabBarIcon: ({ color }) => (
-                <TabBarIcon name="repeat" color={color} />
-              ),
-              headerLeft: MenuButton,
-            }}
-          />
-          <Tabs.Screen
-            name="cart"
-            options={{
-              title: "Sacola",
-              tabBarIcon: ({ color }) => (
-                <TabBarIcon name="bag-shopping" color={color} />
-              ),
-              headerLeft: MenuButton,
-            }}
-          />
-        </Tabs>
-      </CartProvider>
+        />
+        <Tabs.Screen
+          name="rebuy"
+          options={{
+            title: "Recompra",
+            tabBarIcon: ({ color }) => (
+              <TabBarIcon name="repeat" color={color} />
+            ),
+            headerLeft: MenuButton,
+          }}
+        />
+        <Tabs.Screen
+          name="cart"
+          options={{
+            title: "Sacola",
+            tabBarIcon: ({ color }) => (
+              <TabBarIcon name="bag-shopping" color={color} />
+            ),
+            headerLeft: MenuButton,
+          }}
+        />
+      </Tabs>
     </>
   );
 }
