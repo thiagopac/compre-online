@@ -54,12 +54,15 @@ function RootLayoutNav() {
           options={{ presentation: "modal" }}
         />
         <Stack.Screen
-          name="CategoryProductsScreen"
-          options={{ title: "Resultados", headerBackTitle: "Voltar" }}
+          name="CategoryProducts"
+          options={{
+            title: "Produtos por categoria",
+            headerBackTitle: "Voltar",
+          }}
         />
         <Stack.Screen
           name="SearchResults"
-          options={{ title: "Resultados da Busca", headerBackTitle: "Voltar" }}
+          options={{ title: "Resultados da busca", headerBackTitle: "Voltar" }}
         />
       </Stack>
     </ThemeProvider>
