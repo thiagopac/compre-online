@@ -30,7 +30,7 @@ const CartProductList = () => {
           />
           <View style={styles.productDetails}>
             <Text style={styles.productName}>{item.product.name}</Text>
-            <Text style={styles.weightBadge}>{item.selectedOption.weight}</Text>
+            <Text style={styles.sizeBadge}>{item.selectedOption.size}</Text>
             <Text style={styles.productPrice}>
               R$ {item.selectedOption.price}
             </Text>
@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: -10,
   },
-  weightBadge: {
+  sizeBadge: {
     position: "absolute",
     left: -85,
     bottom: -10,

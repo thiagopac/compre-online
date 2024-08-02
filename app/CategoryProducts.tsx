@@ -74,9 +74,7 @@ const CategoryProductsScreen = () => {
                   <Text style={styles.productPrice}>
                     R$ {item.options[0].price}
                   </Text>
-                  <Text style={styles.weightBadge}>
-                    {item.options[0].weight}
-                  </Text>
+                  <Text style={styles.sizeBadge}>{item.options[0].size}</Text>
                 </View>
               </TouchableOpacity>
               <TouchableOpacity
@@ -137,7 +135,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: Colors.productList.priceColor,
   },
-  weightBadge: {
+  sizeBadge: {
     backgroundColor: Colors.productList.badgeBackgroundColor,
     color: Colors.productList.badgeTextColor,
     paddingVertical: 5,

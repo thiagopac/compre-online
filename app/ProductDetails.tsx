@@ -64,7 +64,7 @@ const ProductDetails = ({ product, closeModal }: ProductDetailsProps) => {
                     : styles.optionText
                 }
               >
-                {option.weight}
+                {option.size}
               </Text>
             </TouchableOpacity>
           ))}

@@ -31,7 +31,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     const existingIndex = cart.findIndex(
       (item) =>
         item.product.id === product.id &&
-        item.selectedOption.weight === selectedOption.weight
+        item.selectedOption.size === selectedOption.size
     );
 
     setCart((prevCart) => {

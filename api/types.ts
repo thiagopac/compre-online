@@ -6,7 +6,7 @@ export interface Category {
 }
 
 export interface ProductOption {
-  weight: string;
+  size: string;
   price: string;
 }
 

@@ -57,7 +57,7 @@ const HorizontalProductScrollList = ({
             <Text style={styles.productPrice}>
               R$ {product.options[0].price}
             </Text>
-            <Text style={styles.weightBadge}>{product.options[0].weight}</Text>
+            <Text style={styles.sizeBadge}>{product.options[0].size}</Text>
             <TouchableOpacity
               style={styles.addButton}
               onPress={() => openModal(product)}
@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
     marginBottom: 5,
   },
-  weightBadge: {
+  sizeBadge: {
     position: "absolute",
     left: 10,
     top: 10,
