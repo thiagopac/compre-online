@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   TouchableOpacity,
@@ -12,10 +12,21 @@ import { StatusBar } from "expo-status-bar";
 import { useNavigation } from "@react-navigation/native";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import Colors from "@/constants/Colors";
+import { getAppearanceData } from "@/api/appearanceApi";
+import { Appearance } from "@/api/types";
+import Loading from "@/components/Loading";
 
 export default function Menu() {
+  const [appearance, setAppearance] = useState<Appearance | null>(null);
   const navigation = useNavigation();
+
+  useEffect(() => {
+    const loadAppearance = async () => {
+      const data = await getAppearanceData();
+      setAppearance(data);
+    };
+    loadAppearance();
+  }, []);
 
   const handleNavigation = (path: string) => {
     navigation.navigate(path as never);
@@ -28,31 +39,65 @@ export default function Menu() {
     ]);
   };
 
+  if (!appearance) {
+    return <Loading />;
+  }
+
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: appearance.colors.menu.backgroundColor },
+      ]}
+    >
       <ScrollView style={{ width: "100%" }}>
         <MenuItem
           icon="store"
           title="Loja"
           onPress={() => handleNavigation("index")}
+          iconTintColor={appearance.colors.menu.iconTintColor}
+          textColor={appearance.colors.menu.textColor}
+          borderBottomColor={appearance.colors.menu.borderColor}
         />
         <MenuItem
           icon="repeat"
           title="Recompra"
           onPress={() => handleNavigation("rebuy")}
+          iconTintColor={appearance.colors.menu.iconTintColor}
+          textColor={appearance.colors.menu.textColor}
+          borderBottomColor={appearance.colors.menu.borderColor}
         />
         <MenuItem
           icon="bag-shopping"
           title="Sacola"
           onPress={() => handleNavigation("cart")}
+          iconTintColor={appearance.colors.menu.iconTintColor}
+          textColor={appearance.colors.menu.textColor}
+          borderBottomColor={appearance.colors.menu.borderColor}
         />
         <View style={styles.logoutContainer}>
-          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-            <Text style={styles.buttonText}>Sair</Text>
+          <TouchableOpacity
+            style={[
+              styles.logoutButton,
+              { backgroundColor: appearance.colors.menu.logoutButtonColor },
+            ]}
+            onPress={handleLogout}
+          >
+            <Text
+              style={[
+                styles.buttonText,
+                { color: appearance.colors.menu.buttonTextColor },
+              ]}
+            >
+              Sair
+            </Text>
             <FontAwesome
               name="sign-out"
               size={25}
-              style={{ color: "white", marginLeft: "auto" }}
+              style={{
+                color: appearance.colors.menu.buttonTextColor,
+                marginLeft: "auto",
+              }}
             />
           </TouchableOpacity>
         </View>
@@ -62,10 +107,24 @@ export default function Menu() {
   );
 }
 
-const MenuItem = ({ icon, title, onPress }: any) => (
-  <TouchableOpacity style={styles.menuItem} onPress={onPress}>
-    <FontAwesome6 name={icon} size={24} style={styles.icon} />
-    <Text style={styles.menuText}>{title}</Text>
+const MenuItem = ({
+  icon,
+  title,
+  onPress,
+  iconTintColor,
+  textColor,
+  borderBottomColor,
+}: any) => (
+  <TouchableOpacity
+    style={[styles.menuItem, { borderBottomColor }]}
+    onPress={onPress}
+  >
+    <FontAwesome6
+      name={icon}
+      size={24}
+      style={[styles.icon, { color: iconTintColor }]}
+    />
+    <Text style={[styles.menuText, { color: textColor }]}>{title}</Text>
   </TouchableOpacity>
 );
 
@@ -75,7 +134,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingTop: 50,
-    backgroundColor: "#fff",
   },
   menuItem: {
     flexDirection: "row",
@@ -83,16 +141,13 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 20,
     borderBottomWidth: 1,
-    borderBottomColor: "#cccccc",
     width: "100%",
   },
   icon: {
     marginRight: 20,
-    color: Colors.menu.iconTintColor,
   },
   menuText: {
     fontSize: 18,
-    color: "#000",
   },
   logoutContainer: {
     marginTop: 20,
@@ -102,7 +157,6 @@ const styles = StyleSheet.create({
   logoutButton: {
     flexDirection: "row",
     justifyContent: "space-between",
-    backgroundColor: Colors.menu.logoutButtonColor,
     padding: 10,
     borderRadius: 10,
     alignItems: "center",
@@ -110,7 +164,6 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     marginStart: 150,
-    color: "white",
     fontSize: 16,
   },
 });

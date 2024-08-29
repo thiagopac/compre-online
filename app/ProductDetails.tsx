@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -8,9 +8,10 @@ import {
   StyleSheet,
 } from "react-native";
 import { AntDesign, FontAwesome6 } from "@expo/vector-icons";
-import { Product, ProductOption } from "@/api/types";
+import { Product, ProductOption, Appearance } from "@/api/types";
 import { useCart } from "@/context/CartContext";
-import Colors from "@/constants/Colors";
+import { getAppearanceData } from "@/api/appearanceApi";
+import Loading from "@/components/Loading";
 
 interface ProductDetailsProps {
   product: Product;
@@ -23,15 +24,33 @@ const ProductDetails = ({ product, closeModal }: ProductDetailsProps) => {
     product.options[0]
   );
   const [quantity, setQuantity] = useState(1);
+  const [appearance, setAppearance] = useState<Appearance | null>(null);
+
+  useEffect(() => {
+    const loadAppearance = async () => {
+      const data = await getAppearanceData();
+      setAppearance(data);
+    };
+    loadAppearance();
+  }, []);
 
   const handleAddToCart = () => {
     addToCart(product, quantity, selectedOption);
     closeModal?.();
   };
 
+  if (!appearance) {
+    return <Loading />;
+  }
+
   return (
     <View style={styles.modalOverlay}>
-      <ScrollView style={styles.container}>
+      <ScrollView
+        style={[
+          styles.container,
+          { backgroundColor: appearance.colors.productDetails.backgroundColor },
+        ]}
+      >
         <TouchableOpacity
           style={{ position: "absolute", top: 10, right: 10, zIndex: 10 }}
           onPress={closeModal}
@@ -39,29 +58,77 @@ const ProductDetails = ({ product, closeModal }: ProductDetailsProps) => {
           <AntDesign
             name="close"
             size={24}
-            color={Colors.productDetails.textColor}
+            color={appearance.colors.productDetails.textColor}
           />
         </TouchableOpacity>
-        <Text style={styles.pageTitle}>Detalhes do Produto</Text>
+        <Text
+          style={[
+            styles.pageTitle,
+            { color: appearance.colors.productDetails.pageTitleColor },
+          ]}
+        >
+          Detalhes do Produto
+        </Text>
         <Image source={{ uri: product.image }} style={styles.image} />
-        <Text style={styles.name}>{product.name}</Text>
-        <Text style={styles.price}>R$ {selectedOption.price}</Text>
+        <Text
+          style={[
+            styles.name,
+            { color: appearance.colors.productDetails.textColor },
+          ]}
+        >
+          {product.name}
+        </Text>
+        <Text
+          style={[
+            styles.price,
+            { color: appearance.colors.productDetails.textColor },
+          ]}
+        >
+          R$ {selectedOption.price}
+        </Text>
         <View style={styles.optionsContainer}>
           {product.options.map((option, index) => (
             <TouchableOpacity
               key={index}
               style={
                 selectedOption === option
-                  ? styles.optionSelected
-                  : styles.option
+                  ? [
+                      styles.optionSelected,
+                      {
+                        backgroundColor:
+                          appearance.colors.productDetails
+                            .selectedOptionBackground,
+                      },
+                    ]
+                  : [
+                      styles.option,
+                      {
+                        backgroundColor:
+                          appearance.colors.productDetails
+                            .unselectedOptionBackground,
+                      },
+                    ]
               }
               onPress={() => setSelectedOption(option)}
             >
               <Text
                 style={
                   selectedOption === option
-                    ? styles.optionTextSelected
-                    : styles.optionText
+                    ? [
+                        styles.optionTextSelected,
+                        {
+                          color:
+                            appearance.colors.productDetails.selectedOptionText,
+                        },
+                      ]
+                    : [
+                        styles.optionText,
+                        {
+                          color:
+                            appearance.colors.productDetails
+                              .unselectedOptionText,
+                        },
+                      ]
                 }
               >
                 {option.size}
@@ -72,29 +139,73 @@ const ProductDetails = ({ product, closeModal }: ProductDetailsProps) => {
         <View style={styles.quantityControl}>
           <TouchableOpacity
             onPress={() => setQuantity(Math.max(1, quantity - 1))}
-            style={styles.controlButton}
+            style={[
+              styles.controlButton,
+              {
+                backgroundColor:
+                  appearance.colors.productDetails.controlButtonBackground,
+              },
+            ]}
           >
-            <Text style={styles.controlText}>-</Text>
+            <Text
+              style={{
+                color: appearance.colors.productDetails.controlTextColor,
+              }}
+            >
+              -
+            </Text>
           </TouchableOpacity>
-          <Text style={styles.quantityText}>{quantity}</Text>
+          <Text
+            style={[
+              styles.quantityText,
+              { color: appearance.colors.productDetails.textColor },
+            ]}
+          >
+            {quantity}
+          </Text>
           <TouchableOpacity
             onPress={() => setQuantity(quantity + 1)}
-            style={styles.controlButton}
+            style={[
+              styles.controlButton,
+              {
+                backgroundColor:
+                  appearance.colors.productDetails.controlButtonBackground,
+              },
+            ]}
           >
-            <Text style={styles.controlText}>+</Text>
+            <Text
+              style={{
+                color: appearance.colors.productDetails.controlTextColor,
+              }}
+            >
+              +
+            </Text>
           </TouchableOpacity>
         </View>
         <TouchableOpacity
-          style={styles.addToCartButton}
+          style={[
+            styles.addToCartButton,
+            {
+              backgroundColor:
+                appearance.colors.productDetails.buttonBackground,
+            },
+          ]}
           onPress={handleAddToCart}
         >
           <FontAwesome6
             name="cart-plus"
             size={18}
-            color={Colors.productDetails.buttonText}
+            color={appearance.colors.productDetails.buttonText}
             style={{ marginRight: 8 }}
           />
-          <Text style={styles.addToCartText}>Adicionar à sacola</Text>
+          <Text
+            style={[
+              styles.addToCartText,
+              { color: appearance.colors.productDetails.buttonText },
+            ]}
+          >
+            Adicionar à sacola
+          </Text>
         </TouchableOpacity>
       </ScrollView>
     </View>
@@ -107,7 +218,6 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   container: {
-    backgroundColor: Colors.productDetails.backgroundColor,
     paddingHorizontal: 20,
     paddingTop: 20,
     paddingBottom: 40,
@@ -119,7 +229,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginTop: 10,
     textAlign: "left",
-    color: Colors.productDetails.pageTitleColor,
   },
   image: {
     width: "100%",
@@ -131,12 +240,10 @@ const styles = StyleSheet.create({
     fontSize: 18,
     textAlign: "left",
     marginTop: 20,
-    color: Colors.productDetails.textColor,
   },
   price: {
     fontSize: 25,
     fontWeight: "bold",
-    color: Colors.productDetails.textColor,
     marginBottom: 10,
   },
   optionsContainer: {
@@ -145,7 +252,6 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   option: {
-    backgroundColor: Colors.productDetails.unselectedOptionBackground,
     borderRadius: 5,
     padding: 20,
     marginHorizontal: 5,
@@ -155,7 +261,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   optionSelected: {
-    backgroundColor: Colors.productDetails.selectedOptionBackground,
     borderRadius: 5,
     marginHorizontal: 5,
     padding: 20,
@@ -166,11 +271,9 @@ const styles = StyleSheet.create({
   },
   optionText: {
     fontSize: 18,
-    color: Colors.productDetails.unselectedOptionText,
   },
   optionTextSelected: {
     fontSize: 18,
-    color: Colors.productDetails.selectedOptionText,
   },
   quantityControl: {
     flexDirection: "row",
@@ -179,7 +282,6 @@ const styles = StyleSheet.create({
     marginTop: 30,
   },
   controlButton: {
-    backgroundColor: Colors.productDetails.controlButtonBackground,
     width: 40,
     height: 40,
     borderRadius: 20,
@@ -187,17 +289,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  controlText: {
-    fontSize: 24,
-    color: Colors.productDetails.controlTextColor,
-  },
   quantityText: {
     marginHorizontal: 20,
     fontSize: 20,
-    color: Colors.productDetails.textColor,
   },
   addToCartButton: {
-    backgroundColor: Colors.productDetails.buttonBackground,
     paddingVertical: 15,
     borderRadius: 5,
     marginTop: 50,
@@ -206,7 +302,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   addToCartText: {
-    color: Colors.productDetails.buttonText,
     fontSize: 18,
     textAlign: "center",
     fontWeight: "bold",

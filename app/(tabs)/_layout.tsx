@@ -1,13 +1,14 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { Link, Tabs } from "expo-router";
 import { Pressable, Image, Platform } from "react-native";
-import Colors from "@/constants/Colors";
+import { getAppearanceData } from "@/api/appearanceApi";
+import { Appearance } from "@/api/types";
 import { useColorScheme } from "@/components/useColorScheme";
 import { StatusBar } from "expo-status-bar";
-import { CartProvider } from "@/context/CartContext";
 import Images from "@/constants/Images";
+import Loading from "@/components/Loading";
 
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome6>["name"];
@@ -24,14 +25,14 @@ const NavBarTitle = () => (
   />
 );
 
-const MenuButton = () => (
+const MenuButton = ({ color }: { color: string }) => (
   <Link href="/Menu" asChild>
     <Pressable>
       {({ pressed }) => (
         <FontAwesome
           name="bars"
           size={25}
-          color={Colors.text.primary}
+          color={color}
           style={{ marginLeft: 15, opacity: pressed ? 0.5 : 1 }}
         />
       )}
@@ -41,13 +42,26 @@ const MenuButton = () => (
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const [appearance, setAppearance] = useState<Appearance | null>(null);
+
+  useEffect(() => {
+    const loadAppearance = async () => {
+      const data = await getAppearanceData();
+      setAppearance(data);
+    };
+    loadAppearance();
+  }, []);
+
+  if (!appearance) {
+    return <Loading />;
+  }
 
   return (
     <>
       <StatusBar style={Platform.OS === "ios" ? "dark" : "auto"} />
       <Tabs
         screenOptions={{
-          tabBarActiveTintColor: Colors.tab.activeTintColor,
+          tabBarActiveTintColor: appearance.colors.tab.activeTintColor,
           headerShown: true,
           headerTitle: () => <NavBarTitle />,
         }}
@@ -59,7 +73,9 @@ export default function TabLayout() {
             tabBarIcon: ({ color }) => (
               <TabBarIcon name="store" color={color} />
             ),
-            headerLeft: MenuButton,
+            headerLeft: () => (
+              <MenuButton color={appearance.colors.text.primary} />
+            ),
           }}
         />
         <Tabs.Screen
@@ -69,7 +85,9 @@ export default function TabLayout() {
             tabBarIcon: ({ color }) => (
               <TabBarIcon name="repeat" color={color} />
             ),
-            headerLeft: MenuButton,
+            headerLeft: () => (
+              <MenuButton color={appearance.colors.text.primary} />
+            ),
           }}
         />
         <Tabs.Screen
@@ -79,7 +97,9 @@ export default function TabLayout() {
             tabBarIcon: ({ color }) => (
               <TabBarIcon name="bag-shopping" color={color} />
             ),
-            headerLeft: MenuButton,
+            headerLeft: () => (
+              <MenuButton color={appearance.colors.text.primary} />
+            ),
           }}
         />
       </Tabs>

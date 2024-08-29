@@ -1,24 +1,27 @@
-import React from "react";
-import {
-  View,
-  Text,
-  Image,
-  FlatList,
-  StyleSheet,
-  TouchableOpacity,
-} from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { Product } from "@/api/types";
 import { useCart } from "@/context/CartContext";
-import Colors from "@/constants/Colors";
-
-interface CartProductListProps {
-  title: string;
-  data: Product[];
-}
+import { getAppearanceData } from "@/api/appearanceApi";
+import { Appearance } from "@/api/types";
+import Loading from "@/components/Loading";
 
 const CartProductList = () => {
   const { cart, removeFromCart } = useCart();
+  const [appearance, setAppearance] = useState<Appearance | null>(null);
+
+  useEffect(() => {
+    const loadAppearance = async () => {
+      const data = await getAppearanceData();
+      setAppearance(data);
+    };
+    loadAppearance();
+  }, []);
+
+  if (!appearance) {
+    return <Loading />;
+  }
 
   return (
     <View style={styles.container}>
@@ -29,15 +32,46 @@ const CartProductList = () => {
             style={styles.productImage}
           />
           <View style={styles.productDetails}>
-            <Text style={styles.productName}>{item.product.name}</Text>
-            <Text style={styles.sizeBadge}>{item.selectedOption.size}</Text>
-            <Text style={styles.productPrice}>
+            <Text
+              style={[
+                styles.productName,
+                { color: appearance.colors.text.primary },
+              ]}
+            >
+              {item.product.name}
+            </Text>
+            <Text
+              style={[
+                styles.sizeBadge,
+                {
+                  backgroundColor:
+                    appearance.colors.productList.badgeBackgroundColor,
+                  color: appearance.colors.productList.badgeTextColor,
+                },
+              ]}
+            >
+              {item.selectedOption.size}
+            </Text>
+            <Text
+              style={[
+                styles.productPrice,
+                { color: appearance.colors.productList.priceColor },
+              ]}
+            >
               R$ {item.selectedOption.price}
             </Text>
-            <Text>Quantidade: {item.quantity}</Text>
+            <Text style={{ color: appearance.colors.text.primary }}>
+              Quantidade: {item.quantity}
+            </Text>
             <TouchableOpacity
               onPress={() => removeFromCart(item.product.id)}
-              style={styles.removeButton}
+              style={[
+                styles.removeButton,
+                {
+                  backgroundColor:
+                    appearance.colors.cart.removeProductButtonBackgroundColor,
+                },
+              ]}
             >
               <FontAwesome5 name="trash" size={20} color="white" />
             </TouchableOpacity>
@@ -97,10 +131,8 @@ const styles = StyleSheet.create({
   productPrice: {
     fontSize: 19,
     fontWeight: "bold",
-    color: "black",
   },
   removeButton: {
-    backgroundColor: Colors.cart.removeProductButtonBackgroundColor,
     padding: 10,
     borderRadius: 25,
     width: 50,
@@ -116,8 +148,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: -85,
     bottom: -10,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    color: "white",
     paddingVertical: 5,
     paddingHorizontal: 10,
     overflow: "hidden",

@@ -9,9 +9,9 @@ import {
   Modal,
 } from "react-native";
 import { useLocalSearchParams } from "expo-router";
-import { Product, StoreData } from "@/api/types";
+import { Product, StoreData, Appearance } from "@/api/types";
 import { fetchStoreData } from "@/api/storeApi";
-import Colors from "@/constants/Colors";
+import { getAppearanceData } from "@/api/appearanceApi";
 import ProductDetails from "@/app/ProductDetails";
 import FontAwesome5 from "@expo/vector-icons/build/FontAwesome5";
 import Loading from "@/components/Loading";
@@ -34,9 +34,13 @@ const SearchResultsScreen = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [appearance, setAppearance] = useState<Appearance | null>(null);
 
   useEffect(() => {
     const loadProducts = async () => {
+      const appearanceData = await getAppearanceData();
+      setAppearance(appearanceData);
+
       const data: StoreData | null = await fetchStoreData();
       if (data) {
         const filteredProducts = data.productLists.flatMap((list) =>
@@ -63,9 +67,20 @@ const SearchResultsScreen = () => {
     setSelectedProduct(null);
   };
 
-  if (loading) return <Loading />;
+  if (loading || !appearance) return <Loading />;
   if (products.length === 0)
-    return <Text style={styles.noResultsText}>Nenhum produto encontrado</Text>;
+    return (
+      <View style={styles.emptyContainer}>
+        <Text
+          style={[
+            styles.noResultsText,
+            { color: appearance.colors.text.primary },
+          ]}
+        >
+          Nenhum produto encontrado
+        </Text>
+      </View>
+    );
 
   return (
     <View style={styles.container}>
@@ -73,22 +88,58 @@ const SearchResultsScreen = () => {
         data={products}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View style={styles.productCard}>
+          <View
+            style={[
+              styles.productCard,
+              {
+                backgroundColor: appearance.colors.productList.backgroundColor,
+                borderColor: appearance.colors.productList.borderColor,
+              },
+            ]}
+          >
             <TouchableOpacity
               onPress={() => openModal(item)}
               style={{ flexDirection: "row", flex: 1 }}
             >
               <Image source={{ uri: item.image }} style={styles.productImage} />
               <View style={styles.productDetails}>
-                <Text style={styles.productName}>{item.name}</Text>
-                <Text style={styles.productPrice}>
+                <Text
+                  style={[
+                    styles.productName,
+                    { color: appearance.colors.text.primary },
+                  ]}
+                >
+                  {item.name}
+                </Text>
+                <Text
+                  style={[
+                    styles.productPrice,
+                    { color: appearance.colors.productList.priceColor },
+                  ]}
+                >
                   R$ {item.options[0].price}
                 </Text>
-                <Text style={styles.sizeBadge}>{item.options[0].size}</Text>
+                <Text
+                  style={[
+                    styles.sizeBadge,
+                    {
+                      backgroundColor:
+                        appearance.colors.productList.badgeBackgroundColor,
+                      color: appearance.colors.productList.badgeTextColor,
+                    },
+                  ]}
+                >
+                  {item.options[0].size}
+                </Text>
               </View>
             </TouchableOpacity>
             <TouchableOpacity
-              style={styles.addButton}
+              style={[
+                styles.addButton,
+                {
+                  backgroundColor: appearance.colors.productList.addButtonColor,
+                },
+              ]}
               onPress={() => openModal(item)}
             >
               <FontAwesome5 name="plus" size={20} color="white" />
@@ -113,17 +164,15 @@ const SearchResultsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.productList.backgroundColor,
+    backgroundColor: "#fff",
     padding: "4%",
   },
   productCard: {
     flexDirection: "row",
     padding: 10,
-    backgroundColor: Colors.productList.backgroundColor,
     marginBottom: 10,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: Colors.productList.borderColor,
     overflow: "hidden",
   },
   productImage: {
@@ -142,11 +191,8 @@ const styles = StyleSheet.create({
   productPrice: {
     fontSize: 18,
     fontWeight: "bold",
-    color: Colors.productList.priceColor,
   },
   sizeBadge: {
-    backgroundColor: Colors.productList.badgeBackgroundColor,
-    color: Colors.productList.badgeTextColor,
     paddingVertical: 5,
     width: 50,
     textAlign: "center",
@@ -158,7 +204,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: 10,
     bottom: 10,
-    backgroundColor: Colors.productList.addButtonColor,
     padding: 10,
     borderRadius: 25,
     width: 50,
@@ -169,8 +214,13 @@ const styles = StyleSheet.create({
   noResultsText: {
     textAlign: "center",
     fontSize: 18,
-    color: Colors.text.primary,
     marginTop: 20,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#fff",
   },
 });
 

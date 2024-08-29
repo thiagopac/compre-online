@@ -1,32 +1,49 @@
-// app/LoginScreen.tsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
   TextInput,
-  Button,
   StyleSheet,
   TouchableOpacity,
   Image,
 } from "react-native";
 import { useRouter } from "expo-router";
-import Colors from "@/constants/Colors";
-import Images from "@/constants/Images";
+import { getAppearanceData } from "@/api/appearanceApi";
+import { Appearance } from "@/api/types";
+import Loading from "@/components/Loading";
 
 export default function LoginScreen() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [appearance, setAppearance] = useState<Appearance | null>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    const loadAppearance = async () => {
+      const data = await getAppearanceData();
+      setAppearance(data);
+    };
+    loadAppearance();
+  }, []);
 
   const handleLogin = () => {
     router.push("(tabs)");
   };
 
+  if (!appearance) {
+    return <Loading />;
+  }
+
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: appearance.colors.login.backgroundColor },
+      ]}
+    >
       <View style={styles.logoContainer}>
         <Image
-          source={Images.logo.white}
+          source={{ uri: appearance.images.logo.white }}
           style={styles.logo}
           resizeMode="contain"
         />
@@ -34,34 +51,77 @@ export default function LoginScreen() {
       <View style={styles.formContainer}>
         <Text style={styles.label}>E-mail ou CPF</Text>
         <TextInput
-          style={styles.input}
+          style={[
+            styles.input,
+            { borderColor: appearance.colors.login.inputBorderColor },
+          ]}
           placeholder="Digite seu e-mail ou CPF"
           value={username}
           onChangeText={setUsername}
         />
         <Text style={styles.label}>Senha</Text>
         <TextInput
-          style={styles.input}
+          style={[
+            styles.input,
+            { borderColor: appearance.colors.login.inputBorderColor },
+          ]}
           placeholder="Digite sua senha"
           secureTextEntry
           value={password}
           onChangeText={setPassword}
         />
         <TouchableOpacity>
-          <Text style={styles.forgotPassword}>Esqueci minha senha</Text>
+          <Text
+            style={[
+              styles.forgotPassword,
+              { color: appearance.colors.login.linkColor },
+            ]}
+          >
+            Esqueci minha senha
+          </Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-          <Text style={styles.loginButtonText}>Entrar</Text>
+        <TouchableOpacity
+          style={[
+            styles.loginButton,
+            { backgroundColor: appearance.colors.login.buttonBackground },
+          ]}
+          onPress={handleLogin}
+        >
+          <Text
+            style={[
+              styles.loginButtonText,
+              { color: appearance.colors.login.textColor },
+            ]}
+          >
+            Entrar
+          </Text>
         </TouchableOpacity>
         <Text style={styles.orText}>ou</Text>
         <TouchableOpacity
-          style={styles.guestButton}
+          style={[
+            styles.guestButton,
+            { borderColor: appearance.colors.login.buttonBackground },
+          ]}
           onPress={() => router.push("(tabs)")}
         >
-          <Text style={styles.guestButtonText}>Entrar sem conta</Text>
+          <Text
+            style={[
+              styles.guestButtonText,
+              { color: appearance.colors.login.buttonBackground },
+            ]}
+          >
+            Entrar sem conta
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity>
-          <Text style={styles.createAccount}>Criar conta</Text>
+          <Text
+            style={[
+              styles.createAccount,
+              { color: appearance.colors.login.linkColor },
+            ]}
+          >
+            Criar conta
+          </Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -71,7 +131,6 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.login.backgroundColor,
     padding: 16,
     justifyContent: "center",
   },
@@ -100,26 +159,22 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 40,
-    borderColor: Colors.login.inputBorderColor,
     borderWidth: 1,
     borderRadius: 5,
     marginBottom: 16,
     paddingHorizontal: 8,
   },
   forgotPassword: {
-    color: Colors.login.linkColor,
     textAlign: "right",
     marginBottom: 16,
   },
   loginButton: {
-    backgroundColor: Colors.login.buttonBackground,
     paddingVertical: 12,
     borderRadius: 5,
     alignItems: "center",
     marginBottom: 16,
   },
   loginButtonText: {
-    color: Colors.login.textColor,
     fontSize: 16,
   },
   orText: {
@@ -128,7 +183,6 @@ const styles = StyleSheet.create({
     color: "#333",
   },
   guestButton: {
-    borderColor: Colors.login.buttonBackground,
     borderWidth: 1,
     paddingVertical: 12,
     borderRadius: 5,
@@ -136,11 +190,9 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   guestButtonText: {
-    color: Colors.login.buttonBackground,
     fontSize: 16,
   },
   createAccount: {
-    color: Colors.login.linkColor,
     textAlign: "center",
   },
 });

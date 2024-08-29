@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { FontAwesome6 } from "@expo/vector-icons";
-import { Category } from "@/api/types";
-import Colors from "@/constants/Colors";
+import { Category, Appearance } from "@/api/types";
+import { getAppearanceData } from "@/api/appearanceApi";
 import { useRouter } from "expo-router";
+import Loading from "@/components/Loading";
 
 interface CategorySquaresProps {
   categories: Category[];
@@ -11,6 +12,15 @@ interface CategorySquaresProps {
 
 const CategorySquares = ({ categories }: CategorySquaresProps) => {
   const router = useRouter();
+  const [appearance, setAppearance] = useState<Appearance | null>(null);
+
+  useEffect(() => {
+    const loadAppearance = async () => {
+      const data = await getAppearanceData();
+      setAppearance(data);
+    };
+    loadAppearance();
+  }, []);
 
   const handleCategoryPress = (categoryKey: string) => {
     console.log("Category key:", categoryKey);
@@ -21,20 +31,34 @@ const CategorySquares = ({ categories }: CategorySquaresProps) => {
     });
   };
 
+  if (!appearance) {
+    return <Loading />;
+  }
+
   return (
     <View style={styles.container}>
       {categories.map((category) => (
         <TouchableOpacity
           key={category.id}
-          style={styles.categoryItem}
+          style={[
+            styles.categoryItem,
+            { backgroundColor: appearance.colors.category.itemBackground },
+          ]}
           onPress={() => handleCategoryPress(category.key)}
         >
           <FontAwesome6
             name={category.icon}
             size={30}
-            color={Colors.category.textColor}
+            color={appearance.colors.category.textColor}
           />
-          <Text style={styles.categoryText}>{category.name}</Text>
+          <Text
+            style={[
+              styles.categoryText,
+              { color: appearance.colors.category.textColor },
+            ]}
+          >
+            {category.name}
+          </Text>
         </TouchableOpacity>
       ))}
     </View>
@@ -52,7 +76,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     margin: 4,
-    backgroundColor: Colors.category.itemBackground,
     borderRadius: 10,
     padding: 10,
     width: 116,

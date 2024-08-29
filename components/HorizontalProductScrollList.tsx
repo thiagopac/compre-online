@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -9,9 +9,10 @@ import {
   Modal,
 } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
-import { Product } from "@/api/types";
+import { Product, Appearance } from "@/api/types";
+import { getAppearanceData } from "@/api/appearanceApi";
 import ProductDetails from "@/app/ProductDetails";
-import Colors from "@/constants/Colors";
+import Loading from "@/components/Loading";
 
 interface HorizontalProductScrollListProps {
   title: string;
@@ -24,6 +25,15 @@ const HorizontalProductScrollList = ({
 }: HorizontalProductScrollListProps) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [appearance, setAppearance] = useState<Appearance | null>(null);
+
+  useEffect(() => {
+    const loadAppearance = async () => {
+      const data = await getAppearanceData();
+      setAppearance(data);
+    };
+    loadAppearance();
+  }, []);
 
   const openModal = (product: Product) => {
     setSelectedProduct(product);
@@ -34,18 +44,40 @@ const HorizontalProductScrollList = ({
     setModalVisible(false);
   };
 
+  if (!appearance) {
+    return <Loading />;
+  }
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>{title}</Text>
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: appearance.colors.productList.backgroundColor },
+      ]}
+    >
+      <Text style={[styles.title, { color: appearance.colors.text.primary }]}>
+        {title}
+      </Text>
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
         style={styles.scrollView}
       >
         {data.map((product: Product) => (
-          <View key={product.id} style={styles.productCard}>
+          <View
+            key={product.id}
+            style={[
+              styles.productCard,
+              {
+                backgroundColor: appearance.colors.productList.backgroundColor,
+              },
+            ]}
+          >
             <TouchableOpacity
-              style={styles.imageWrapper}
+              style={[
+                styles.imageWrapper,
+                { borderColor: appearance.colors.productList.borderColor },
+              ]}
               onPress={() => openModal(product)}
             >
               <Image
@@ -53,13 +85,41 @@ const HorizontalProductScrollList = ({
                 style={styles.productImage}
               />
             </TouchableOpacity>
-            <Text style={styles.productName}>{product.name}</Text>
-            <Text style={styles.productPrice}>
+            <Text
+              style={[
+                styles.productName,
+                { color: appearance.colors.text.primary },
+              ]}
+            >
+              {product.name}
+            </Text>
+            <Text
+              style={[
+                styles.productPrice,
+                { color: appearance.colors.productList.priceColor },
+              ]}
+            >
               R$ {product.options[0].price}
             </Text>
-            <Text style={styles.sizeBadge}>{product.options[0].size}</Text>
+            <Text
+              style={[
+                styles.sizeBadge,
+                {
+                  backgroundColor:
+                    appearance.colors.productList.badgeBackgroundColor,
+                  color: appearance.colors.productList.badgeTextColor,
+                },
+              ]}
+            >
+              {product.options[0].size}
+            </Text>
             <TouchableOpacity
-              style={styles.addButton}
+              style={[
+                styles.addButton,
+                {
+                  backgroundColor: appearance.colors.productList.addButtonColor,
+                },
+              ]}
               onPress={() => openModal(product)}
             >
               <FontAwesome5 name="plus" size={20} color="white" />
@@ -85,7 +145,6 @@ const styles = StyleSheet.create({
   container: {
     marginTop: 20,
     marginBottom: 20,
-    backgroundColor: Colors.productList.backgroundColor,
     paddingLeft: "4%",
   },
   title: {
@@ -100,7 +159,6 @@ const styles = StyleSheet.create({
     width: 160,
     height: 270,
     marginRight: 15,
-    backgroundColor: Colors.productList.backgroundColor,
     overflow: "hidden",
     paddingBottom: 30,
   },
@@ -109,7 +167,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 20,
     borderWidth: 1,
-    borderColor: Colors.productList.borderColor,
   },
   productImage: {
     width: "100%",
@@ -121,8 +178,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: 10,
     top: 10,
-    backgroundColor: Colors.productList.badgeBackgroundColor,
-    color: Colors.productList.badgeTextColor,
     paddingVertical: 5,
     paddingHorizontal: 10,
     overflow: "hidden",
@@ -133,7 +188,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: 6,
     bottom: 80,
-    backgroundColor: Colors.productList.addButtonColor,
     padding: 10,
     borderRadius: 25,
     width: 50,
@@ -152,7 +206,6 @@ const styles = StyleSheet.create({
   productPrice: {
     fontSize: 18,
     fontWeight: "bold",
-    color: Colors.productList.priceColor,
     marginTop: 5,
     marginLeft: 6,
   },

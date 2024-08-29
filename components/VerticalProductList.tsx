@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -9,9 +9,10 @@ import {
   Modal,
 } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
-import { Product } from "@/api/types";
+import { Product, Appearance } from "@/api/types";
+import { getAppearanceData } from "@/api/appearanceApi";
 import ProductDetails from "@/app/ProductDetails";
-import Colors from "@/constants/Colors";
+import Loading from "@/components/Loading";
 
 interface VerticalProductListProps {
   title: string;
@@ -21,6 +22,15 @@ interface VerticalProductListProps {
 const VerticalProductList = ({ title, data }: VerticalProductListProps) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [appearance, setAppearance] = useState<Appearance | null>(null);
+
+  useEffect(() => {
+    const loadAppearance = async () => {
+      const data = await getAppearanceData();
+      setAppearance(data);
+    };
+    loadAppearance();
+  }, []);
 
   const openModal = (product: Product) => {
     setSelectedProduct(product);
@@ -31,30 +41,79 @@ const VerticalProductList = ({ title, data }: VerticalProductListProps) => {
     setModalVisible(false);
   };
 
+  if (!appearance) {
+    return <Loading />;
+  }
+
   return (
-    <View style={styles.container}>
-      {title && <Text style={styles.title}>{title}</Text>}
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: appearance.colors.productList.backgroundColor },
+      ]}
+    >
+      {title && (
+        <Text style={[styles.title, { color: appearance.colors.text.primary }]}>
+          {title}
+        </Text>
+      )}
 
       <FlatList
         data={data}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <View style={styles.productCard}>
+          <View
+            style={[
+              styles.productCard,
+              {
+                backgroundColor: appearance.colors.productList.backgroundColor,
+                borderColor: appearance.colors.productList.borderColor,
+              },
+            ]}
+          >
             <TouchableOpacity
               onPress={() => openModal(item)}
               style={{ flexDirection: "row", flex: 1 }}
             >
               <Image source={{ uri: item.image }} style={styles.productImage} />
               <View style={styles.productDetails}>
-                <Text style={styles.productName}>{item.name}</Text>
-                <Text style={styles.productPrice}>
+                <Text
+                  style={[
+                    styles.productName,
+                    { color: appearance.colors.text.primary },
+                  ]}
+                >
+                  {item.name}
+                </Text>
+                <Text
+                  style={[
+                    styles.productPrice,
+                    { color: appearance.colors.productList.priceColor },
+                  ]}
+                >
                   R$ {item.options[0].price}
                 </Text>
-                <Text style={styles.sizeBadge}>{item.options[0].size}</Text>
+                <Text
+                  style={[
+                    styles.sizeBadge,
+                    {
+                      backgroundColor:
+                        appearance.colors.productList.badgeBackgroundColor,
+                      color: appearance.colors.productList.badgeTextColor,
+                    },
+                  ]}
+                >
+                  {item.options[0].size}
+                </Text>
               </View>
             </TouchableOpacity>
             <TouchableOpacity
-              style={styles.addButton}
+              style={[
+                styles.addButton,
+                {
+                  backgroundColor: appearance.colors.productList.addButtonColor,
+                },
+              ]}
               onPress={() => openModal(item)}
             >
               <FontAwesome5 name="plus" size={20} color="white" />
@@ -79,7 +138,6 @@ const VerticalProductList = ({ title, data }: VerticalProductListProps) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.productList.backgroundColor,
     padding: "4%",
   },
   title: {
@@ -90,11 +148,9 @@ const styles = StyleSheet.create({
   productCard: {
     flexDirection: "row",
     padding: 10,
-    backgroundColor: Colors.productList.backgroundColor,
     marginBottom: 10,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: Colors.productList.borderColor,
     overflow: "hidden",
   },
   productImage: {
@@ -113,11 +169,8 @@ const styles = StyleSheet.create({
   productPrice: {
     fontSize: 18,
     fontWeight: "bold",
-    color: Colors.productList.priceColor,
   },
   sizeBadge: {
-    backgroundColor: Colors.productList.badgeBackgroundColor,
-    color: Colors.productList.badgeTextColor,
     paddingVertical: 5,
     width: 50,
     textAlign: "center",
@@ -129,7 +182,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: 10,
     bottom: 10,
-    backgroundColor: Colors.productList.addButtonColor,
     padding: 10,
     borderRadius: 25,
     width: 50,
