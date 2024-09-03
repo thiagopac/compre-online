@@ -120,3 +120,9 @@ export interface ListOfSuggestions {
   type: "horizontal" | "vertical";
   uri: string;
 }
+
+export interface ProductCategory {
+  id: string;
+  name: string;
+  thumbnail: string;
+}
