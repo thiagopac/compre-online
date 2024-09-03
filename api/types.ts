@@ -106,3 +106,17 @@ export interface Appearance {
     };
   };
 }
+
+//Anderson interface
+
+export interface PaymentMode {
+  id: string;
+  name: string;
+  isEnabled: boolean;
+}
+
+export interface ListOfSuggestions {
+  name: string;
+  type: "horizontal" | "vertical";
+  uri: string;
+}
