@@ -49,37 +49,18 @@ export default function LoginScreen() {
         />
       </View>
       <View style={styles.formContainer}>
-        <Text style={styles.label}>E-mail ou CPF</Text>
+        <Text style={styles.label}>E-mail</Text>
         <TextInput
           style={[
             styles.input,
             { borderColor: appearance.colors.login.inputBorderColor },
           ]}
-          placeholder="Digite seu e-mail ou CPF"
+          keyboardType="email-address"
+          placeholder="Digite seu e-mail"
+          autoCapitalize="none"
           value={username}
           onChangeText={setUsername}
         />
-        <Text style={styles.label}>Senha</Text>
-        <TextInput
-          style={[
-            styles.input,
-            { borderColor: appearance.colors.login.inputBorderColor },
-          ]}
-          placeholder="Digite sua senha"
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
-        />
-        <TouchableOpacity>
-          <Text
-            style={[
-              styles.forgotPassword,
-              { color: appearance.colors.login.linkColor },
-            ]}
-          >
-            Esqueci minha senha
-          </Text>
-        </TouchableOpacity>
         <TouchableOpacity
           style={[
             styles.loginButton,
@@ -93,34 +74,7 @@ export default function LoginScreen() {
               { color: appearance.colors.login.textColor },
             ]}
           >
-            Entrar
-          </Text>
-        </TouchableOpacity>
-        <Text style={styles.orText}>ou</Text>
-        <TouchableOpacity
-          style={[
-            styles.guestButton,
-            { borderColor: appearance.colors.login.buttonBackground },
-          ]}
-          onPress={() => router.push("(tabs)")}
-        >
-          <Text
-            style={[
-              styles.guestButtonText,
-              { color: appearance.colors.login.buttonBackground },
-            ]}
-          >
-            Entrar sem conta
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Text
-            style={[
-              styles.createAccount,
-              { color: appearance.colors.login.linkColor },
-            ]}
-          >
-            Criar conta
+            Enviar código para e-mail
           </Text>
         </TouchableOpacity>
       </View>
