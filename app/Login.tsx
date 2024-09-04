@@ -13,6 +13,7 @@ import { useRouter } from "expo-router";
 import { getAppearanceData } from "@/api/appearanceApi";
 import { Appearance } from "@/api/types";
 import Loading from "@/components/Loading";
+import { AntDesign } from '@expo/vector-icons'; // Importando o ícone da biblioteca expo/vector-icons
 
 export default function LoginScreen() {
   const [username, setUsername] = useState("");
@@ -99,6 +100,14 @@ export default function LoginScreen() {
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
+            {/* Botão de fechar no canto superior direito */}
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={handleCloseModal}
+            >
+              <AntDesign name="close" size={24} color="black" />
+            </TouchableOpacity>
+
             <Text style={styles.label}>Digite o código recebido:</Text>
             <TextInput
               style={[
@@ -198,5 +207,11 @@ const styles = StyleSheet.create({
   resendText: {
     textAlign: "center",
     marginBottom: 16,
+  },
+  closeButton: {
+    position: "absolute",
+    top: 10,
+    right: 10,
+    zIndex: 1,
   },
 });
