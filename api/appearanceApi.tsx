@@ -18,7 +18,6 @@ export const fetchAppearanceData = async () => {
 };
 
 export const getAppearanceData = async () => {
-  await AsyncStorage.removeItem("appearanceData");
   const storedData = await AsyncStorage.getItem("appearanceData");
   if (storedData) {
     return JSON.parse(storedData);

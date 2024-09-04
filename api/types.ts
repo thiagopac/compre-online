@@ -106,3 +106,27 @@ export interface Appearance {
     };
   };
 }
+
+export interface PaymentMode {
+  id: string;
+  name: string;
+  isEnabled: boolean;
+}
+
+export interface ListOfSuggestions {
+  name: string;
+  type: "horizontal" | "vertical";
+  uri: string;
+}
+
+export interface ProductCategory {
+  id: string;
+  name: string;
+  thumbnail: string;
+}
+
+export interface AuthResponse {
+  token: string;
+  type: string;
+  expiresIn: number;
+}

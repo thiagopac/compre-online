@@ -7,19 +7,24 @@ import {
   TouchableOpacity,
   Image,
   Modal,
-  Button,
+  KeyboardAvoidingView,
+  ScrollView,
+  Platform,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { getAppearanceData } from "@/api/appearanceApi";
+import { requestAccessCode, validateCode } from "@/api/clientApi";
 import { Appearance } from "@/api/types";
 import Loading from "@/components/Loading";
-import { AntDesign } from '@expo/vector-icons'; // Importando o ícone da biblioteca expo/vector-icons
+import { AntDesign } from "@expo/vector-icons";
 
 export default function LoginScreen() {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [isModalVisible, setModalVisible] = useState(false);
   const [appearance, setAppearance] = useState<Appearance | null>(null);
+  const [isRequesting, setIsRequesting] = useState(false);
+  const [isValidating, setIsValidating] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -30,17 +35,50 @@ export default function LoginScreen() {
     loadAppearance();
   }, []);
 
-  const handleLogin = () => {
-    setModalVisible(true);
+  const handleLogin = async () => {
+    setIsRequesting(true);
+    try {
+      await requestAccessCode(email);
+      setModalVisible(true);
+    } catch (error) {
+      console.error("Erro ao solicitar o código de acesso:", error);
+    } finally {
+      setIsRequesting(false);
+    }
   };
 
   const handleCloseModal = () => {
     setModalVisible(false);
   };
 
-  const handleValidateCode = () => {
-    console.log("Código digitado:", code);
-    handleCloseModal();
+  const handleValidateCode = async () => {
+    setIsValidating(true);
+    try {
+      const isValid = await validateCode(email, code);
+      if (isValid) {
+        console.log("Código validado com sucesso!");
+        setModalVisible(false);
+        router.push("(tabs)");
+      } else {
+        console.error("Código inválido.");
+      }
+    } catch (error) {
+      console.error("Erro ao validar o código:", error);
+    } finally {
+      setIsValidating(false);
+    }
+  };
+
+  const handleResendCode = async () => {
+    setIsRequesting(true);
+    try {
+      await requestAccessCode(email);
+      console.log("Código reenviado com sucesso.");
+    } catch (error) {
+      console.error("Erro ao reenviar o código:", error);
+    } finally {
+      setIsRequesting(false);
+    }
   };
 
   if (!appearance) {
@@ -48,110 +86,133 @@ export default function LoginScreen() {
   }
 
   return (
-    <View
-      style={[
-        styles.container,
-        { backgroundColor: appearance.colors.login.backgroundColor },
-      ]}
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={styles.container}
     >
-      <View style={styles.logoContainer}>
-        <Image
-          source={{ uri: appearance.images.logo.white }}
-          style={styles.logo}
-          resizeMode="contain"
-        />
-      </View>
-      <View style={styles.formContainer}>
-        <Text style={styles.label}>E-mail</Text>
-        <TextInput
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+        <View
           style={[
-            styles.input,
-            { borderColor: appearance.colors.login.inputBorderColor },
+            styles.innerContainer,
+            { backgroundColor: appearance.colors.login.backgroundColor },
           ]}
-          keyboardType="email-address"
-          placeholder="Digite seu e-mail"
-          autoCapitalize="none"
-          value={username}
-          onChangeText={setUsername}
-        />
-        <TouchableOpacity
-          style={[
-            styles.loginButton,
-            { backgroundColor: appearance.colors.login.buttonBackground },
-          ]}
-          onPress={handleLogin}
         >
-          <Text
-            style={[
-              styles.loginButtonText,
-              { color: appearance.colors.login.textColor },
-            ]}
-          >
-            Enviar código para e-mail
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      <Modal
-        visible={isModalVisible}
-        animationType="slide"
-        transparent={true}
-        onRequestClose={handleCloseModal}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            {/* Botão de fechar no canto superior direito */}
-            <TouchableOpacity
-              style={styles.closeButton}
-              onPress={handleCloseModal}
-            >
-              <AntDesign name="close" size={24} color="black" />
-            </TouchableOpacity>
-
-            <Text style={styles.label}>Digite o código recebido:</Text>
+          <View style={styles.logoContainer}>
+            <Image
+              source={{ uri: appearance.images.logo.white }}
+              style={styles.logo}
+              resizeMode="contain"
+            />
+          </View>
+          <View style={styles.formContainer}>
+            <Text style={styles.label}>E-mail</Text>
             <TextInput
               style={[
                 styles.input,
                 { borderColor: appearance.colors.login.inputBorderColor },
               ]}
-              placeholder="Código"
-              keyboardType="numeric"
-              value={code}
-              onChangeText={setCode}
+              keyboardType="email-address"
+              placeholder="Digite seu e-mail"
+              autoCapitalize="none"
+              value={email}
+              onChangeText={setEmail}
             />
-
             <TouchableOpacity
               style={[
-              styles.loginButton,
+                styles.loginButton,
                 { backgroundColor: appearance.colors.login.buttonBackground },
-                ]}
-                onPress={handleValidateCode}
-              >
-              <Text
-              style={[
-                styles.loginButtonText,
-                { color: appearance.colors.login.textColor },
               ]}
+              onPress={handleLogin}
+              disabled={isRequesting}
+            >
+              <Text
+                style={[
+                  styles.loginButtonText,
+                  { color: appearance.colors.login.textColor },
+                ]}
               >
-              Validar código
+                {isRequesting
+                  ? "Enviando código..."
+                  : "Enviar código para e-mail"}
               </Text>
             </TouchableOpacity>
-
-            <TouchableOpacity onPress={() => console.log("Reenviar código")}>
-              <Text style={styles.resendText}>Reenviar código para e-mail</Text>
-            </TouchableOpacity>
           </View>
+
+          <Modal
+            visible={isModalVisible}
+            animationType="slide"
+            transparent={true}
+            onRequestClose={handleCloseModal}
+          >
+            <KeyboardAvoidingView
+              behavior={Platform.OS === "ios" ? "padding" : "height"}
+              style={{ flex: 1 }}
+            >
+              <View style={styles.modalOverlay}>
+                <View style={styles.modalContent}>
+                  <TouchableOpacity
+                    style={styles.closeButton}
+                    onPress={handleCloseModal}
+                  >
+                    <AntDesign name="close" size={24} color="black" />
+                  </TouchableOpacity>
+
+                  <Text style={styles.label}>Digite o código recebido:</Text>
+                  <TextInput
+                    style={[
+                      styles.input,
+                      { borderColor: appearance.colors.login.inputBorderColor },
+                    ]}
+                    placeholder="Código"
+                    keyboardType="numeric"
+                    value={code}
+                    onChangeText={setCode}
+                  />
+
+                  <TouchableOpacity
+                    style={[
+                      styles.loginButton,
+                      {
+                        backgroundColor:
+                          appearance.colors.login.buttonBackground,
+                      },
+                    ]}
+                    onPress={handleValidateCode}
+                    disabled={isValidating}
+                  >
+                    <Text
+                      style={[
+                        styles.loginButtonText,
+                        { color: appearance.colors.login.textColor },
+                      ]}
+                    >
+                      {isValidating ? "Validando..." : "Validar código"}
+                    </Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity onPress={handleResendCode}>
+                    <Text style={styles.resendText}>
+                      Reenviar código para e-mail
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </KeyboardAvoidingView>
+          </Modal>
         </View>
-      </Modal>
-    </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+  },
+  innerContainer: {
+    flex: 1,
     justifyContent: "center",
+    padding: 16,
   },
   logoContainer: {
     alignItems: "center",
@@ -207,6 +268,7 @@ const styles = StyleSheet.create({
   resendText: {
     textAlign: "center",
     marginBottom: 16,
+    color: "#007BFF",
   },
   closeButton: {
     position: "absolute",

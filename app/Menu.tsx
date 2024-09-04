@@ -13,6 +13,7 @@ import { useNavigation } from "@react-navigation/native";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { getAppearanceData } from "@/api/appearanceApi";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Appearance } from "@/api/types";
 import Loading from "@/components/Loading";
 
@@ -35,8 +36,19 @@ export default function Menu() {
   const handleLogout = () => {
     Alert.alert("Logout", "Deseja realmente sair?", [
       { text: "Cancelar", onPress: () => console.log("Cancel Pressed") },
-      { text: "Sair", onPress: () => navigation.navigate("Login" as never) },
+      { text: "Sair", onPress: logout },
     ]);
+  };
+
+  const logout = async () => {
+    try {
+      await AsyncStorage.removeItem("authToken");
+      await AsyncStorage.removeItem("clientToken");
+      console.log("Tokens removidos com sucesso.");
+      navigation.navigate("Login" as never);
+    } catch (error) {
+      console.error("Erro ao remover tokens:", error);
+    }
   };
 
   if (!appearance) {

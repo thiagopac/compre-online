@@ -4,8 +4,11 @@ import { DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
 import "react-native-reanimated";
+import { useEffect, useState } from "react";
+import { authenticate } from "@/api/authApi";
+import Loading from "@/components/Loading";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export { ErrorBoundary } from "expo-router";
 
@@ -21,6 +24,26 @@ export default function RootLayout() {
     ...FontAwesome.font,
   });
 
+  const [isAuthReady, setIsAuthReady] = useState(false);
+
+  const initializeAuth = async () => {
+    try {
+      const token = await AsyncStorage.getItem("authToken");
+
+      if (!token) {
+        const authResponse = await authenticate();
+        if (authResponse) {
+          console.log("Token armazenado:", authResponse.token);
+        } else {
+          console.error("Erro ao autenticar.");
+        }
+      }
+      setIsAuthReady(true);
+    } catch (error) {
+      console.error("Erro ao inicializar autenticação:", error);
+    }
+  };
+
   useEffect(() => {
     if (error) throw error;
   }, [error]);
@@ -31,8 +54,12 @@ export default function RootLayout() {
     }
   }, [loaded]);
 
-  if (!loaded) {
-    return null;
+  useEffect(() => {
+    initializeAuth();
+  }, []);
+
+  if (!loaded || !isAuthReady) {
+    return <Loading />;
   }
 
   return (
