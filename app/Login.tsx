@@ -6,6 +6,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   Image,
+  Modal,
+  Button,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { getAppearanceData } from "@/api/appearanceApi";
@@ -14,7 +16,8 @@ import Loading from "@/components/Loading";
 
 export default function LoginScreen() {
   const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [code, setCode] = useState("");
+  const [isModalVisible, setModalVisible] = useState(false);
   const [appearance, setAppearance] = useState<Appearance | null>(null);
   const router = useRouter();
 
@@ -27,7 +30,16 @@ export default function LoginScreen() {
   }, []);
 
   const handleLogin = () => {
-    router.push("(tabs)");
+    setModalVisible(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalVisible(false);
+  };
+
+  const handleValidateCode = () => {
+    console.log("Código digitado:", code);
+    handleCloseModal();
   };
 
   if (!appearance) {
@@ -78,6 +90,50 @@ export default function LoginScreen() {
           </Text>
         </TouchableOpacity>
       </View>
+
+      <Modal
+        visible={isModalVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={handleCloseModal}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.label}>Digite o código recebido:</Text>
+            <TextInput
+              style={[
+                styles.input,
+                { borderColor: appearance.colors.login.inputBorderColor },
+              ]}
+              placeholder="Código"
+              keyboardType="numeric"
+              value={code}
+              onChangeText={setCode}
+            />
+
+            <TouchableOpacity
+              style={[
+              styles.loginButton,
+                { backgroundColor: appearance.colors.login.buttonBackground },
+                ]}
+                onPress={handleValidateCode}
+              >
+              <Text
+              style={[
+                styles.loginButtonText,
+                { color: appearance.colors.login.textColor },
+              ]}
+              >
+              Validar código
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => console.log("Reenviar código")}>
+              <Text style={styles.resendText}>Reenviar código para e-mail</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -118,10 +174,6 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     paddingHorizontal: 8,
   },
-  forgotPassword: {
-    textAlign: "right",
-    marginBottom: 16,
-  },
   loginButton: {
     paddingVertical: 12,
     borderRadius: 5,
@@ -131,22 +183,20 @@ const styles = StyleSheet.create({
   loginButtonText: {
     fontSize: 16,
   },
-  orText: {
+  modalOverlay: {
+    flex: 1,
+    justifyContent: "flex-end",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    backgroundColor: "white",
+    padding: 20,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    minHeight: 200,
+  },
+  resendText: {
     textAlign: "center",
     marginBottom: 16,
-    color: "#333",
-  },
-  guestButton: {
-    borderWidth: 1,
-    paddingVertical: 12,
-    borderRadius: 5,
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  guestButtonText: {
-    fontSize: 16,
-  },
-  createAccount: {
-    textAlign: "center",
   },
 });
