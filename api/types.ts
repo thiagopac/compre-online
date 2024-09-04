@@ -126,3 +126,9 @@ export interface ProductCategory {
   name: string;
   thumbnail: string;
 }
+
+export interface AuthResponse {
+  token: string;
+  type: string;
+  expiresIn: number;
+}
